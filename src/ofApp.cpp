@@ -85,7 +85,7 @@ void ofApp::setup() {
         
         gui.add(roiX.setup("roi x", 137, 0, 640));
         gui.add(roiY.setup("roi y", 35, 0, 480));
-        gui.add(roiW.setup("roi w", 501, 0, 640));
+        gui.add(roiW.setup("roi w", 525, 0, 640));
         gui.add(roiH.setup("roi h", 388, 0, 480));
         
         scaleVal = 1;
@@ -97,21 +97,21 @@ void ofApp::setup() {
         //gui.add(nearThreshold.setup("near threshold", 135, 0, 255));
         
         // Home
-        gui.add(roiX.setup("roi x", 30, 0, 640));
-        gui.add(roiY.setup("roi y", 50, 0, 480));
-        gui.add(roiW.setup("roi w", 556, 0, 640));
-        gui.add(roiH.setup("roi h", 326, 0, 480));
+        gui.add(roiX.setup("roi x", 67, 0, 640));
+        gui.add(roiY.setup("roi y", 57, 0, 480));
+        gui.add(roiW.setup("roi w", 525, 0, 640));
+        gui.add(roiH.setup("roi h", 350, 0, 480));
         
         scaleVal = 2;
     }
     
     // Bounds parameters
-    gui.add(boundsX.setup("bounds x", 250, -500, 500)); // 263
+    gui.add(boundsX.setup("bounds x", 258, 0, 500)); // 263
     gui.add(boundsY.setup("bounds y", 40, 0, 500));
-    gui.add(boundsW.setup("bounds w", 1360, 400, 2000)); //802
-    gui.add(leftBoundsDiff.setup("right bounds diff", 0, -170, 0)); // inverted intentionally
-    gui.add(rightBoundsDiff.setup("left bounds diff", 0, -104, 0));
-    gui.add(boundsH.setup("bounds h", 1005, 220, 1280));
+    gui.add(boundsW.setup("bounds w", 1648, 400, 2000)); //802
+    gui.add(leftBoundsDiff.setup("right bounds diff", -84, -170, 0)); // inverted intentionally
+    gui.add(rightBoundsDiff.setup("left bounds diff", -104, -104, 0));
+    gui.add(boundsH.setup("bounds h", 882, 220, 1280));
     
     // Set blob parameters
     if (roomMode == 2) {
@@ -129,8 +129,8 @@ void ofApp::setup() {
         gui.add(maxFarThreshold.setup("max far threshold", 0, 0, 255));
     }
     
-    gui.add(minNearThreshold.setup("min near threshold", 90, 0, 255)); // For NYU: 114
-    gui.add(maxNearThreshold.setup("max near threshold", 90, 0, 255)); // For NYU: 141
+    gui.add(minNearThreshold.setup("min near threshold", 149, 0, 255)); // For NYU: 114
+    gui.add(maxNearThreshold.setup("max near threshold", 153, 0, 255)); // For NYU: 141
     
     // Blob values
     gui.add(maxBlobArea.setup("max blob area", (roiW * roiH) - 4000, 0, roiW * roiH));
@@ -154,8 +154,8 @@ void ofApp::setup() {
         // THIS IS THE ONE TO MODIFY
         gui.add(fboLeft.setup("fbo left", 88, -300, 400));
         gui.add(fboTop.setup("fbo top", 0, -200, 300));
-        gui.add(shapeFboTop.setup("shape fbo top", 271, -400, 400));
-        gui.add(shapeFboLeft.setup("shape fbo left", 450, -200, 700));
+        gui.add(shapeFboTop.setup("shape fbo top", 167, -400, 400));
+        gui.add(shapeFboLeft.setup("shape fbo left", 556, -200, 700));
     }
     
     // Seat circles
@@ -171,13 +171,13 @@ void ofApp::setup() {
     gui.add(shoesScale.setup("shoes scale", .44, 0., 1.));
     gui.add(shoesScale2.setup("shoes scale 2", .22, 0., 1.));
     
-    gui.add(textX.setup("text x", -3620, -4000, -3000));
-    gui.add(textX2.setup("text x2", -3575, -4000, -3000));
-    gui.add(textY.setup("text y", -2440, -4000, 2000));
+    gui.add(textX.setup("text x", -3860, -4000, -3000));
+    gui.add(textX2.setup("text x2", -3825, -4000, -3000));
+    gui.add(textY.setup("text y", -2170, -4000, 2000));
     
-    gui.add(xOffset.setup("x offset",4,0,20)); // the x value where we should start generating INNER shapes
-    gui.add(yOffset.setup("y offset",3,0,12));
-    gui.add(xRange.setup("x range",3,0,20)); // the range of the play area x must be at least 3 (min square size)
+    gui.add(xOffset.setup("x offset",5,0,20)); // the x value where we should start generating INNER shapes
+    gui.add(yOffset.setup("y offset",2,0,12));
+    gui.add(xRange.setup("x range",4,0,20)); // the range of the play area x must be at least 3 (min square size)
     gui.add(yRange.setup("y range",4,0,12));
     gui.add(GRID_SQUARE_SIZE.setup("grid square size",125,40,200));
     
@@ -573,7 +573,7 @@ void ofApp::draw() {
     
     // Draw grid lines
     // TODO: Put back if needed
-    ofPushStyle();
+    /*ofPushStyle();
     ofNoFill();
     ofSetColor(255,255,255);
     ofSetLineWidth(1);
@@ -582,7 +582,7 @@ void ofApp::draw() {
             ofDrawRectangle(i, j, GRID_SQUARE_SIZE, GRID_SQUARE_SIZE);
         }
     }
-    ofPopStyle();
+    ofPopStyle();*/
     
     // Seat circles
     /*ofPushStyle();
