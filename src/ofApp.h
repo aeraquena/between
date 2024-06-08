@@ -78,7 +78,7 @@ public:
     ofxIntSlider roiH;
     
     // Depth thresholds
-    //ofxIntSlider nearThreshold;
+    // min and max threshold to account for sloped surface (angled camera)
     ofxIntSlider minNearThreshold;
     ofxIntSlider maxNearThreshold;
     ofxIntSlider minFarThreshold;
@@ -89,6 +89,7 @@ public:
     ofxIntSlider maxBlobArea;
     ofxIntSlider maxBlobNum;
     
+    // Number of blobs in previous frame
     int prevNumBlobs = 0;
     
     /**************
@@ -122,8 +123,6 @@ public:
      * MARK: Graphics *
      ******************/
     
-    // Target triangle line width
-    
     // Smoothing values for blobs
     ofxIntSlider smoothingSize;
     ofxFloatSlider smoothingShape;
@@ -153,12 +152,12 @@ public:
     ofxIntSlider boundsY;
     ofxIntSlider boundsW;
     ofxIntSlider boundsH;
-    //ofxIntSlider boundsW2;
-    ofxIntSlider leftBoundsDiff;
+    ofxIntSlider leftBoundsDiff; // differences in bound width - create a trapezoid to account for keystoned projections
     ofxIntSlider rightBoundsDiff;
     
     
     // Circles for seat cushions
+    // TODO: Remove
     ofxIntSlider circle1X;
     ofxIntSlider circle1Y;
     ofxIntSlider circle2X;
@@ -194,8 +193,6 @@ public:
      * MARK: Target rectangle *
      **********************/
     
-    //int GRID_SQUARE_SIZE;
-    
     ofImage shoes;
     ofxIntSlider shoesX;
     ofxIntSlider shoesY;
@@ -206,7 +203,7 @@ public:
     ofxIntSlider textX2;
     ofxIntSlider textY;
     
-    // Note: These are all in square units... should be multiplied by grid square size
+    // Note: These are all in square units... should be multiplied by GRID_SQUARE_SIZE
     int targetRectX;
     int targetRectY;
     int targetRectW;
