@@ -9,14 +9,6 @@ void ofApp::setup() {
     
     // Physical setup
     
-    // 0 = Dual screen desktop
-    // 1 = Bedroom wall
-    // 2 = Single screen desktop
-    // 3 = Church floor, single projection (presentation mode)
-    // 4 = Church floor, dual screen and projection
-    roomMode = 4;
-    
-    // Mode for video on first screen
     // Mode for video on first screen
     
     // 1. Video
@@ -55,138 +47,65 @@ void ofApp::setup() {
     scaleVal = 2;
     
     // Set Kinect depth detection thresholds
-    if (roomMode == 0) {
-        // Desktop
-        // 4 feet away
-        
-        //gui.add(nearThreshold.setup("near threshold", 177, 0, 255));
-        
-        gui.add(roiX.setup("roi x", 48, 0, 640));
-        gui.add(roiY.setup("roi y", 50, 0, 480));
-        gui.add(roiW.setup("roi w", 550, 0, 640));
-        gui.add(roiH.setup("roi h", 376, 0, 480));
-        
-    } else if (roomMode == 1) {
-        // Bedroom wall
-        // 8 feet away
-        
-        //gui.add(nearThreshold.setup("near threshold", 177, 0, 255));
-        
-        gui.add(roiX.setup("roi x", 163, 0, 640));
-        gui.add(roiY.setup("roi y", 136, 0, 480));
-        gui.add(roiW.setup("roi w", 294, 0, 640));
-        gui.add(roiH.setup("roi h", 182, 0, 480));
-        
-    } else if (roomMode == 2) {
-        // Desktop
-        // 4 feet away
-        
-        //gui.add(nearThreshold.setup("near threshold", 242, 0, 255));
-        
-        gui.add(roiX.setup("roi x", 137, 0, 640));
-        gui.add(roiY.setup("roi y", 35, 0, 480));
-        gui.add(roiW.setup("roi w", 525, 0, 640));
-        gui.add(roiH.setup("roi h", 388, 0, 480));
-        
-        scaleVal = 1;
-    } else if (roomMode == 3 || roomMode == 4) {
-        // THIS IS THE ONE TO MODIFY
-        // Church floor
-        // 10.5 feet away
-        
-        //gui.add(nearThreshold.setup("near threshold", 135, 0, 255));
-        
-        // Home
-        gui.add(roiX.setup("roi x", 67, 0, 640));
-        gui.add(roiY.setup("roi y", 57, 0, 480));
-        gui.add(roiW.setup("roi w", 525, 0, 640));
-        gui.add(roiH.setup("roi h", 350, 0, 480));
-        
-        scaleVal = 2;
-    }
+    gui.add(roiX.setup("roi x", 67, 0, 640));
+    gui.add(roiY.setup("roi y", 57, 0, 480));
+    gui.add(roiW.setup("roi w", 525, 0, 640));
+    gui.add(roiH.setup("roi h", 350, 0, 480));
     
     // Bounds parameters
-    gui.add(boundsX.setup("bounds x", 258, 0, 500)); // 263
+    gui.add(boundsX.setup("bounds x", 258, 0, 500));
     gui.add(boundsY.setup("bounds y", 40, 0, 500));
-    gui.add(boundsW.setup("bounds w", 1648, 400, 2000)); //802
+    gui.add(boundsW.setup("bounds w", 1648, 400, 2000));
     gui.add(leftBoundsDiff.setup("right bounds diff", -84, -170, 0)); // inverted intentionally
     gui.add(rightBoundsDiff.setup("left bounds diff", -104, -104, 0));
     gui.add(boundsH.setup("bounds h", 882, 220, 1280));
     
-    // Set blob parameters
-    if (roomMode == 2) {
-        // Minimum blob area
-        gui.add(minBlobArea.setup("min blob area", 22000, 1000, 30000));
-        
-        gui.add(minFarThreshold.setup("min far threshold", 0, 0, 70));
-        gui.add(maxFarThreshold.setup("max far threshold", 0, 0, 70));
-    } else {
-        // Minimum blob area
-        gui.add(minBlobArea.setup("min blob area", 500, 500, 30000));
-        
-        // Depth thresholds
-        gui.add(minFarThreshold.setup("min far threshold", 0, 0, 255));
-        gui.add(maxFarThreshold.setup("max far threshold", 0, 0, 255));
-    }
-    
-    gui.add(minNearThreshold.setup("min near threshold", 149, 0, 255)); // For NYU: 114
-    gui.add(maxNearThreshold.setup("max near threshold", 153, 0, 255)); // For NYU: 141
+    // Depth thresholds
+    gui.add(minNearThreshold.setup("min near threshold", 149, 0, 255));
+    gui.add(maxNearThreshold.setup("max near threshold", 153, 0, 255));
+    gui.add(minFarThreshold.setup("min far threshold", 0, 0, 255));
+    gui.add(maxFarThreshold.setup("max far threshold", 0, 0, 255));
     
     // Blob values
+    gui.add(minBlobArea.setup("min blob area", 500, 500, 30000));
     gui.add(maxBlobArea.setup("max blob area", (roiW * roiH) - 4000, 0, roiW * roiH));
     gui.add(maxBlobNum.setup("max blob num", 6, 1, 50));
     
     // Smoothing values for blobs
     gui.add(smoothingSize.setup("smoothing size", 11, 0, 100));
     gui.add(smoothingShape.setup("smoothing shape", 0, 0, 1));
-    gui.add(blurValue.setup("blur value", 25, 0, 100)); // must be odd. was 7
-    gui.add(blurThreshold.setup("blur threshold", 247, 0, 255)); //20
+    gui.add(blurValue.setup("blur value", 25, 0, 100)); // must be an odd number
+    gui.add(blurThreshold.setup("blur threshold", 247, 0, 255));
 
     // Position of shape and target FBOs
     // To align silhouettes with bodies
+    gui.add(fboLeft.setup("fbo left", 88, -300, 400));
+    gui.add(fboTop.setup("fbo top", 0, -200, 300));
+    gui.add(shapeFboTop.setup("shape fbo top", 167, -400, 400));
+    gui.add(shapeFboLeft.setup("shape fbo left", 556, -200, 700));
     
-    if (roomMode == 2) {
-        gui.add(fboLeft.setup("fbo left", -300, -400, 300));
-        gui.add(fboTop.setup("fbo top", 0, -200, 400));
-        gui.add(shapeFboTop.setup("shape fbo top", 280, -332, 0));
-        gui.add(shapeFboLeft.setup("shape fbo left", 7, -200, 200));
-    } else {
-        // THIS IS THE ONE TO MODIFY
-        gui.add(fboLeft.setup("fbo left", 88, -300, 400));
-        gui.add(fboTop.setup("fbo top", 0, -200, 300));
-        gui.add(shapeFboTop.setup("shape fbo top", 167, -400, 400));
-        gui.add(shapeFboLeft.setup("shape fbo left", 556, -200, 700));
-    }
-    
-    // Seat circles
-    /*gui.add(circle1X.setup("circle R x", 214, 205, 245));
-    gui.add(circle1Y.setup("circle R y", 472, 455, 495));
-    gui.add(circle1Radius.setup("circle R radius", 0, 87, 127));
-    gui.add(circle2X.setup("circle L x", 1100, 875, 1315));
-    gui.add(circle2Y.setup("circle L y", 488, 475, 515));
-    gui.add(circle2Radius.setup("circle L radius", 0, 90, 130));*/
-    
+    // Shoes position - optional
     gui.add(shoesX.setup("shoes x", -1800, -2500, 0));
     gui.add(shoesY.setup("shoes y", -40, -500, 500));
     gui.add(shoesScale.setup("shoes scale", .44, 0., 1.));
     gui.add(shoesScale2.setup("shoes scale 2", .22, 0., 1.));
     
-    gui.add(textX.setup("text x", -3860, -4000, -3000));
-    gui.add(textX2.setup("text x2", -3825, -4000, -3000));
+    // Text position
+    gui.add(textX.setup("text x", -3860, -4000, -3000)); // Default text
+    gui.add(textX2.setup("text x2", -3825, -4000, -3000)); // Text when inner polygon appears
     gui.add(textY.setup("text y", -2170, -4000, 2000));
     
+    // Target rectangle bounds
     gui.add(xOffset.setup("x offset",5,0,20)); // the x value where we should start generating INNER shapes
     gui.add(yOffset.setup("y offset",2,0,12));
     gui.add(xRange.setup("x range",4,0,20)); // the range of the play area x must be at least 3 (min square size)
     gui.add(yRange.setup("y range",4,0,12));
+    
+    // Grid square size
     gui.add(GRID_SQUARE_SIZE.setup("grid square size",125,40,200));
     
     // Hide controls
     bHide = false;
-    
-    if (roomMode == 3) {
-        bHide = true;
-    }
     
     // Triangulation visible
     triangulationVisible = false;
@@ -194,17 +113,10 @@ void ofApp::setup() {
     /***********************
      * MARK: Allocate FBOs *
      ***********************/
-    
-    if (roomMode == 3 || roomMode == 4) {
-        PROJECTION_WIDTH = 1920;
-        PROJECTION_HEIGHT = 1200; //1080
-    } else if (roomMode == 2) {
-        PROJECTION_WIDTH = 640;
-        PROJECTION_HEIGHT = 480;
-    } else {
-        PROJECTION_WIDTH = 1280;
-        PROJECTION_HEIGHT = 960;
-    }
+
+    // Projection dimensions
+    PROJECTION_WIDTH = 1920;
+    PROJECTION_HEIGHT = 1200;
 
     finalFbo.allocate(PROJECTION_WIDTH,PROJECTION_HEIGHT);
     targetFbo.allocate(PROJECTION_WIDTH,PROJECTION_HEIGHT);
@@ -582,23 +494,6 @@ void ofApp::draw() {
             ofDrawRectangle(i, j, GRID_SQUARE_SIZE, GRID_SQUARE_SIZE);
         }
     }
-    ofPopStyle();*/
-    
-    // Seat circles
-    /*ofPushStyle();
-    
-    // Black bg
-    ofFill();
-    ofSetColor(0,0,0,255);
-    ofDrawCircle(circle1X, circle1Y, circle1Radius);
-    ofDrawCircle(circle2X, circle2Y, circle2Radius);
-    
-    // White outline
-    ofNoFill();
-    ofSetLineWidth(4);
-    ofSetColor(255, 255, 255, 255);
-    ofDrawCircle(circle1X, circle1Y, circle1Radius);
-    ofDrawCircle(circle2X, circle2Y, circle2Radius);
     ofPopStyle();*/
     
     /**************************
@@ -1151,13 +1046,11 @@ void ofApp::draw() {
     }
 
     // Draw ROI on 1st screen
-    if (roomMode != 3) {
-        ofPushStyle();
-        ofNoFill();
-        ofSetColor(0,255,0);
-        ofDrawRectangle(roiX, roiY, roiW, roiH);
-        ofPopStyle();
-    }
+    ofPushStyle();
+    ofNoFill();
+    ofSetColor(0,255,0);
+    ofDrawRectangle(roiX, roiY, roiW, roiH);
+    ofPopStyle();
     
     ofPopMatrix();
     
@@ -1171,78 +1064,13 @@ void ofApp::draw() {
     
     ofPushMatrix();
     
-    if (roomMode == 2 || roomMode == 3) {
-        // Draw shapes
-        finalFbo.draw(fboLeft, fboTop);
-        
-        // Draw targets
-        targetFbo.draw(fboLeft, fboTop);
-    } else {
-        // Draw shapes
-        finalFbo.draw(SCREEN_WIDTH + fboLeft, fboTop);
-        
-        // Draw targets
-        targetFbo.draw(SCREEN_WIDTH + fboLeft, fboTop);
-    }
+    // Draw shapes
+    finalFbo.draw(SCREEN_WIDTH + fboLeft, fboTop);
+    
+    // Draw targets
+    targetFbo.draw(SCREEN_WIDTH + fboLeft, fboTop);
     
     ofPopMatrix();
-    
-    /*************************
-     * MARK: Draw debug text *
-     *************************/
-    
-    if (roomMode != 3) {
-        ofPushStyle();
-        
-        /*stringstream reportStream;
-        
-        reportStream << "Num blobs: " << contourFinder.nBlobs << endl;
-        
-        reportStream << endl;
-
-        franklinBook.drawString("Target X: " +
-                                to_string(nextTargetRect.x * GRID_SQUARE_SIZE + boundsX)
-                                + " Y: " +
-                                to_string(nextTargetRect.y * GRID_SQUARE_SIZE + boundsY), 200, 500);*/
-        
-        /*for (int i = 0; i < boundingBoxes.size(); i++) {
-            int bbX = boundingBoxes[i].x;
-            int bbY = boundingBoxes[i].y;
-            int bbW = boundingBoxes[i].width;
-            int bbH = boundingBoxes[i].height;
-            
-            int bbXScaled = bbX; //bbX * scaleVal + shapeFboLeft;
-            int bbYScaled = bbY; // * scaleVal + shapeFboTop;
-            int bbWScaled = bbW; // * scaleVal;
-            int bbHScaled = bbH; // * scaleVal;
-            
-            franklinBook.drawString("Bounding box X: " +
-                                    to_string(bbXScaled)
-                                    + " Y: " +
-                                    to_string(bbYScaled)
-                                    + " W: " +
-                                    to_string(bbWScaled)
-                                    + " H: " +
-                                    to_string(bbHScaled), 200, 570 + i*70);
-        }*/
-        
-        
-        /*franklinBook.drawString(to_string(moveTarget), 200, 500);
-        franklinBook.drawString(to_string(targetLerpPercent), 200, 430);
-        
-
-        for (int i = 0; i < contourFinder.blobs.size(); i++) {
-            franklinBook.drawString(to_string(contourFinder.blobs[i].area), 200, 570 + i*70);
-        }*/
-
-        
-        //ofDrawBitmapString(reportStream.str(), 220, 550);
-        
-        ofPopStyle();
-    } else {
-        ofHideCursor();
-    }
-    
     
     // Draw GUI
     if(!bHide){

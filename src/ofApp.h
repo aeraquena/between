@@ -152,18 +152,10 @@ public:
     ofxIntSlider boundsY;
     ofxIntSlider boundsW;
     ofxIntSlider boundsH;
-    ofxIntSlider leftBoundsDiff; // differences in bound width - create a trapezoid to account for keystoned projections
+    
+    // differences in bound width - create a trapezoid to account for keystoned projections
+    ofxIntSlider leftBoundsDiff;
     ofxIntSlider rightBoundsDiff;
-    
-    
-    // Circles for seat cushions
-    // TODO: Remove
-    ofxIntSlider circle1X;
-    ofxIntSlider circle1Y;
-    ofxIntSlider circle2X;
-    ofxIntSlider circle2Y;
-    ofxIntSlider circle1Radius;
-    ofxIntSlider circle2Radius;
     
     /**************
      * MARK: Text *
@@ -177,7 +169,6 @@ public:
      *************/
     
     // Display modes
-    int roomMode;
     int videoMode;
     
     // GUI
