@@ -328,12 +328,6 @@ void ofApp::update() {
      * MARK: Draw texture FBOs *
      ***************************/
     
-    shapeColor yellowColor = {
-        ofColor(245, 239, 66),
-        ofColor(245, 239, 66),
-        ofColor(245, 239, 66)
-    };
-    
     for (int i = 0; i < contourFinder.nBlobs; i++){
         ofxCvBlob thisBlob = contourFinder.blobs[i];
         
@@ -346,14 +340,16 @@ void ofApp::update() {
         // Begin texture fbos
         textureFbos[i].begin();
         
-        ofClear(0,0,0); // background
-        // clear the fbo
+        // Clear the FBO
+        ofClear(0,0,0); // background color
         
         int edgeRange = 5;
         bool isTouchingEdge = blobIsTouchingEdge(thisBlob, roiX, roiY, roiW, roiH);
         
-        // if there is NOT a hole, draw texture background
-        // detect if touching the edges
+        // Detect if touching the edges
+        // thisBlob.hole is true if there is a hole in this blob, but not that this blob is a hole itself
+        // thisBlob.hole might have confusing behavior - what if there is no hole in this blob, but it's not a hole itself?
+        // If there's a hole in this blob, draw texture background
         if (thisBlob.hole == true || isTouchingEdge) {
             ofBackground(lightColor);
             
@@ -393,6 +389,7 @@ void ofApp::update() {
                 }
             }
         } else {
+            // This blob is a hole
             ofBackground(0,0,0,0);
         }
         
@@ -405,10 +402,11 @@ void ofApp::update() {
 //--------------------------------------------------------------
 void ofApp::draw() {
     
-    /*****************************
-     * MARK: Populate shape FBOs *
-     *****************************/
+    /****************************
+     * MARK: Get lerped opacity *
+     ****************************/
     
+    // Fade target rectangle in and out when no one is playing
     // Get lerped opacity (scale)
     int frameNum = ofGetFrameNum() % 120;
     int lerpedOpacity = 140;
@@ -416,20 +414,24 @@ void ofApp::draw() {
         if (frameNum < 60) {
             lerpedOpacity =
             ofMap(frameNum,
-                                      0,
-                                      60,
-                                        140,
-                                      180,
-                                      true);
+                    0,
+                    60,
+                    140,
+                    180,
+                    true);
         } else {
             lerpedOpacity = ofMap(frameNum,
-                                      60,
-                                      120,
-                                      180,
-                                      140,
-                                      true);
+                    60,
+                    120,
+                    180,
+                    140,
+                    true);
         }
     }
+    
+    /*****************************
+     * MARK: Populate shape FBOs *
+     *****************************/
     
     // Draw to final FBO
     
@@ -446,25 +448,23 @@ void ofApp::draw() {
     ofNoFill();
     ofSetLineWidth(4);
     
-    /*ofDrawRectangle(
-                    boundsX,
-                    boundsY,
-                    boundsW,
-                    boundsH);*/
-    
     ofBeginShape();
     ofVertex(boundsX - leftBoundsDiff, boundsY);
     ofVertex(boundsX + boundsW + rightBoundsDiff, boundsY);
     ofVertex(boundsX + boundsW, boundsY + boundsH);
     ofVertex(boundsX, boundsY + boundsH);
     ofVertex(boundsX - leftBoundsDiff, boundsY);
-    
     ofEndShape();
     
     ofPopStyle();
     
+    /*************************
+     * MARK: Draw grid lines *
+     *************************/
+    
     // Draw grid lines
-    // TODO: Put back if needed
+    // Put back if needed
+    
     /*ofPushStyle();
     ofNoFill();
     ofSetColor(255,255,255);
@@ -483,18 +483,14 @@ void ofApp::draw() {
     // Clear bounding boxes
     boundingBoxes.clear();
     
+    // Draw polyline around each blob
     for (int i = 0; i < contourFinder.nBlobs; i++){
         ofxCvBlob thisBlob = contourFinder.blobs[i];
         
         ofPolyline cur;
         cur.addVertices(thisBlob.pts);
         cur.setClosed(true);
-        //cur.close();
         cur = cur.getSmoothed(smoothingSize, smoothingShape);
-        
-        /*************************
-         * MARK: Box2d *
-         *************************/
         
         int edgeRange = 5;
          
@@ -511,7 +507,6 @@ void ofApp::draw() {
                 (thisPoint.y >= 0 && thisPoint.y <= edgeRange) ||
                 (thisPoint.y >= roiH - edgeRange && thisPoint.y <= roiH + edgeRange))) {
                contourPolyline.addVertex(thisPoint);
-                // maybe: draw a point here!
             } else {
                 // mark as touching edge
                 touchingEdge = true;
@@ -523,8 +518,7 @@ void ofApp::draw() {
         contourPolyline = contourPolyline.getSmoothed(20, smoothingShape);
         
         // Copy polyline into path so it can be filled
-        
-        if (i < NUM_SHAPE_FBOS) { // && !touchingEdge
+        if (i < NUM_SHAPE_FBOS) {
             shapeFbos[i].begin();
             
             ofClear(0,0,0,0);
@@ -541,21 +535,10 @@ void ofApp::draw() {
             shapeFbos[i].end();
             
             // Set texture for shape
-            // TODO: If it's NOT a hole!
-            // and the rest have to be transparent
             textureFbos[i].getTexture().setAlphaMask(shapeFbos[i].getTexture());
-            //} else {
-                //textureFbos[i].getTexture().setAlphaMask(shapeFbos[i].getTexture()); //getTexture().setAlphaMask(shapeFbos[i].getTexture());
-                // we need an fbo with a clear
-                
-                // JUST simply draw the shapefbo
-                //shapeFbos[i].draw(0,0);
-            //}
             textureFbos[i].draw(0,0);
-            //textureFbos[i].getTexture().setAlphaMask(shapeFbos[i].getTexture());
         }
         
-        // TODO: Nice: cur and contourPolyline are the same? or at least start off the same
         contourPolyline.scale((float) scaleVal, (float) scaleVal);
         ofVec2f myTranslateVector;
         myTranslateVector.x = shapeFboLeft;
@@ -565,27 +548,24 @@ void ofApp::draw() {
         
         contourPolyline.simplify(3);
         
-        // if this is a hole (which program says is NOT a hole), get the centroid and create a triangle
+        // if this is a hole (which program says is NOT a hole, because it doesn't contain a hole), get the centroid and create a triangle
         if (thisBlob.hole == false && !touchingEdge) {
             triangulationVisible = true;
             
             ofPoint centroid = thisBlob.centroid;
-            //ofRectangle boundingRect = thisBlob.boundingRect;
-            // range is 500 - 25000. absolute biggest would be 50000
             float holeArea = thisBlob.area;
             
-            int oldRange = 25000-500;
-            int newRange = 10-3;
+            // TODO: Not sure what oldRange and newRange values represent
+            // range is 500 - 25000. absolute biggest would be 50000
+            int oldRange = 25000-500; // Blob size?
+            int newRange = 10-3; // Resampling count?
+            // scales one range to another
             int newValue = ceil((((holeArea - 500) * newRange) / oldRange) + 3);
             
             ofPushStyle();
             
             // Draw polyline for triangles
-            auto resampledContourPolyline = contourPolyline.getResampledByCount(newValue); //10
-        
-            // Print out points, and get the bounds of the points
-            
-            // is there one???
+            auto resampledContourPolyline = contourPolyline.getResampledByCount(newValue); // 10
             
             ofSetLineWidth(4);
             
@@ -610,25 +590,12 @@ void ofApp::draw() {
                 
                 ofPushStyle();
                 ofSetColor(255,255,255,255);
-                //ofFill();
                 ofSetLineWidth(1);
-                /*ofRectangle smallerBoundingBox = ofRectangle(boundingBoxPoly.x + BOUNDING_BOX_MARGIN,
-                                                             boundingBoxPoly.y  + BOUNDING_BOX_MARGIN,
-                                                             boundingBoxPoly.width - 2*BOUNDING_BOX_MARGIN,
-                                                             boundingBoxPoly.height - 2*BOUNDING_BOX_MARGIN);
-                ofDrawRectangle(smallerBoundingBox.x * scaleVal + shapeFboLeft,
-                                smallerBoundingBox.y * scaleVal + shapeFboTop,
-                                smallerBoundingBox.width * scaleVal,
-                                smallerBoundingBox.height * scaleVal);*/
-                /*ofDrawRectangle(boundingBoxPoly.x * scaleVal + shapeFboLeft,
-                                boundingBoxPoly.y * scaleVal + shapeFboTop,
-                                boundingBoxPoly.width * scaleVal,
-                                boundingBoxPoly.height * scaleVal);*/
                 
                 // optional: draw bounding rect
                 ofDrawRectangle(boundingBoxPoly);
                 
-                boundingBoxes.push_back(boundingBoxPoly); // need to modify it here...
+                boundingBoxes.push_back(boundingBoxPoly);
                 ofPopStyle();
             }
             ofPopStyle();
@@ -637,9 +604,11 @@ void ofApp::draw() {
         }
     }
     
+    /******************************
+     * MARK: Draw grid line cover *
+     ******************************/
     
-    
-    // grid line cover
+    // Put back if drawing grid and need to cover up borders
     
     // top
     /*ofSetColor(0,255,0,255); // will be black
@@ -653,15 +622,20 @@ void ofApp::draw() {
     /*ofSetColor(0,0,0,255);
     ofDrawRectangle(boundsW, fboTop, 105, PROJECTION_HEIGHT);*/
     
-    ofSetColor(255,255,255,255);
+    /********************
+     * MARK: Draw shoes *
+     ********************/
+    
     
     // Draw shoes
-    /*ofPushMatrix();
+    /*
+    ofSetColor(255,255,255,255);
+    ofPushMatrix();
     ofScale(shoesScale2);
-    //shoes.draw(shoesX,shoesY);
+    shoes.draw(shoesX,shoesY);
     ofRotateDeg(180);
     
-    
+    // Draw text and arrows
     ofFill();
     ofTranslate(shoesX, shoesY);
     ofRotateDeg(180);
@@ -670,10 +644,11 @@ void ofApp::draw() {
     ofDrawTriangle(50,10,10,40,90,40);
     ofTranslate(1800,0);
     ofRotateDeg(180);
-        franklinBook.drawString("PLEASE REMOVE SHOES", 50,30);
+    franklinBook.drawString("PLEASE REMOVE SHOES", 50,30);
     
     ofNoFill();
-    ofPopMatrix();*/
+    ofPopMatrix();
+    */
     
     ofPushMatrix();
     ofScale(shoesScale);
@@ -685,7 +660,6 @@ void ofApp::draw() {
     ofSetColor(255,255,255,ofMap(lerpedOpacity, 140, 180, 180, 255));
     ofSetColor(255,255,255);
     
-    // draw big black rect
     if (triangulationVisible) {
         franklinBook.drawString("NOW FIT THE POLYGON INTO THE GRAY AREA", textX2, textY);
     } else {
@@ -706,8 +680,6 @@ void ofApp::draw() {
     /*******************************
      * MARK: Draw target squares *
      *******************************/
-    
-    // TODO: Lerp this based on percent
     
     // Draw a shape at target
     if (moveTarget || (polygonIsTouchingRect && targetLerpPercent >= 1.)) {
