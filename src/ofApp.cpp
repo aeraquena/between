@@ -677,9 +677,9 @@ void ofApp::draw() {
     ofClear(0,0,0,0);
     ofBackground(0,0,0,0);
     
-    /*******************************
+    /*****************************
      * MARK: Draw target squares *
-     *******************************/
+     *****************************/
     
     // Draw a shape at target
     if (moveTarget || (polygonIsTouchingRect && targetLerpPercent >= 1.)) {
@@ -692,18 +692,15 @@ void ofApp::draw() {
     ofTranslate(boundsX, boundsY);
     
     ofPushMatrix();
-    /*ofTranslate(-2*lerpedOpacity,
-                -2*lerpedOpacity);
-    ofScale((nextTargetRect.width + lerpedOpacity)/nextTargetRect.width,
-            (nextTargetRect.height + lerpedOpacity)/nextTargetRect.height);*/
     
     // Dashed lines
-    /* select white for all lines  */
+    // select white for all lines
     glColor3f (1.0, 1.0, 1.0);
     
     glEnable (GL_LINE_STIPPLE);
 
-    glLineStipple (20, 0xAAAA); // first param is length of each dash
+    // first param is length of each dash
+    glLineStipple (20, 0xAAAA);
     glLineWidth(10);
     
     if (targetLerpPercent < 1.) {
@@ -756,8 +753,9 @@ void ofApp::draw() {
         ofSetLineWidth(4);
         ofSetColor(255,255,255,255);
         ofNoFill();
-        //ofDrawRectangle(targetRect);
         
+        // Put back if changing from dashed lines to solid lines
+        //ofDrawRectangle(targetRect);
         // Outer rect
         /*ofDrawRectangle(targetRect.x - GRID_SQUARE_SIZE,
                         targetRect.y - GRID_SQUARE_SIZE,
@@ -837,7 +835,7 @@ void ofApp::draw() {
         // If transition is complete,
         // Draw the static target rect
         ofFill();
-        ofSetColor(255,255,255,lerpedOpacity); // weirdly - go down to 150 and its almost invisible?
+        ofSetColor(255,255,255,lerpedOpacity);
         
         // Blink
         
@@ -871,7 +869,7 @@ void ofApp::draw() {
         
         // Inner rect
         
-        // TODO: Put back?
+        // TODO: Put back if changing from dashed lines to solid lines
         ofSetLineWidth(4);
         ofSetColor(255,255,255,255);
         ofNoFill();
@@ -1038,14 +1036,12 @@ void ofApp::exit() {
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
-    //updateTargets();
     moveTarget = true;
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed (int key) {
     switch (key) {
-            
         case 'o':
             kinect.open();
             break;
@@ -1087,7 +1083,6 @@ void ofApp::keyPressed (int key) {
         case ' ':
             // Press space to manually move target
             moveTarget = true;
-            //updateTargets();
             break;
     }
 }
@@ -1109,26 +1104,8 @@ bool ofApp::blobIsTouchingEdge(ofxCvBlob thisBlob, int roiX, int roiY, int roiW,
 }
 
 //--------------------------------------------------------------
-// Custom function that takes an index and returns the coordinates of the triangle we refer to
-/*vector <ofPoint> ofApp::getTriangle(int i, ofxDelaunay thisTriangulation){
-    int pA = thisTriangulation.triangleMesh.getIndex(i*3);
-    int pB = thisTriangulation.triangleMesh.getIndex(i*3+1);
-    int pC = thisTriangulation.triangleMesh.getIndex(i*3+2);
-    
-    ofPoint pointA = thisTriangulation.triangleMesh.getVertex(pA);
-    ofPoint pointB = thisTriangulation.triangleMesh.getVertex(pB);
-    ofPoint pointC = thisTriangulation.triangleMesh.getVertex(pC);
-    
-    vector <ofPoint> points;
-    points.push_back(pointA);
-    points.push_back(pointB);
-    points.push_back(pointC);
-    return points;
-}*/
-
-//--------------------------------------------------------------
 void ofApp::updateTargets() {
-    int minTargetSize = 1; //3
+    int minTargetSize = 1;
     
     int nextX = ofRandom(xOffset, xOffset + xRange - minTargetSize);
     int nextY = ofRandom(yOffset, yOffset + yRange - minTargetSize);
