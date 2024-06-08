@@ -134,7 +134,7 @@ void ofApp::setup() {
      * MARK: Set up graphics *
      *************************/
     
-    // TODO: Change to green whenever I want to see bg color
+    // Change to green (0,255,0) whenever I want to see background color
     ofBackground(0);
     
     ofSetPolyMode(OF_POLY_WINDING_POSITIVE);
@@ -209,16 +209,17 @@ void ofApp::setup() {
     };
     shapeColors.push_back(pinkRedColor);
     
-    /*************************
+    /*******************************
      * MARK: Set up target squares *
-     *************************/
+     *******************************/
     
-    //moveTarget = true;
     updateTargets();
 
-    /*************************
-     * MARK: Set up image *
-     *************************/
+    /**********************
+     * MARK: Set up shoes *
+     **********************/
+    
+    // Put this back when drawing shoes
     //shoes.load("shoes.png");
 }
 
@@ -271,8 +272,8 @@ void ofApp::update() {
         grayImage.setROI(roiX, roiY, roiW, roiH);
         
         // Find contours
-        contourFinder.findContours(grayImage, minBlobArea, maxBlobArea, maxBlobNum, true, true);
         // last params: bFindHoles, bUseApproximation
+        contourFinder.findContours(grayImage, minBlobArea, maxBlobArea, maxBlobNum, true, true);
         
         grayImage.resetROI();
         
@@ -287,12 +288,7 @@ void ofApp::update() {
          * MARK: Detect number of players *
          **********************************/
         
-        //blobArea = 0;
-        /*for (int i = 0; i < contourFinder.nBlobs; i++) {
-            blobArea += contourFinder.blobs[i].area;
-        }*/
-        
-        // Check every second
+        // Check every frame
         if (ofGetFrameNum()) {
             if (prevNumBlobs != contourFinder.nBlobs) {
                 // Shuffle colors
@@ -306,41 +302,25 @@ void ofApp::update() {
          * MARK: Targets *
          *****************/
         
-        // Compare ALL the current bounding boxes (which should be stored in a vector) against hte target
+        // Compare ALL the current bounding boxes (which are stored in a vector) against the target
         for (int i = 0; i < boundingBoxes.size(); i++) {
             int bbX = boundingBoxes[i].x;
             int bbY = boundingBoxes[i].y;
             int bbW = boundingBoxes[i].width;
             int bbH = boundingBoxes[i].height;
             
-            int bbXScaled = bbX;// * scaleVal + shapeFboLeft;
-            int bbYScaled = bbY;// * scaleVal + shapeFboTop;
-            int bbWScaled = bbW;// * scaleVal;
-            int bbHScaled = bbH;// * scaleVal;
-            
-            // scale all targets by boundsX, bounds Y
-            
             // could replace this with nextTargetRect
-            bool isWithinOuterRect = bbXScaled > ((nextTargetRect.x - 1) * GRID_SQUARE_SIZE + boundsX) &&
-                                    bbYScaled > ((nextTargetRect.y - 1) * GRID_SQUARE_SIZE  + boundsY) &&
-                                    bbWScaled < ((nextTargetRect.width + 2) * GRID_SQUARE_SIZE) && // might have to subtract x and y
-                                    bbHScaled < ((nextTargetRect.height + 2) * GRID_SQUARE_SIZE);
+            bool isWithinOuterRect = bbX > ((nextTargetRect.x - 1) * GRID_SQUARE_SIZE + boundsX) &&
+                                    bbY > ((nextTargetRect.y - 1) * GRID_SQUARE_SIZE  + boundsY) &&
+                                    bbW < ((nextTargetRect.width + 2) * GRID_SQUARE_SIZE) &&
+                                    bbH < ((nextTargetRect.height + 2) * GRID_SQUARE_SIZE);
             
-            bool isOutsideInnerRect = bbXScaled < (nextTargetRect.x * GRID_SQUARE_SIZE + boundsX) &&
-                                        bbYScaled < (nextTargetRect.y * GRID_SQUARE_SIZE + boundsY) &&
-                                        bbWScaled > (nextTargetRect.width * GRID_SQUARE_SIZE) && // might have to subtract x and y - but prob not
-                                        bbHScaled > (nextTargetRect.height * GRID_SQUARE_SIZE);
+            bool isOutsideInnerRect = bbX < (nextTargetRect.x * GRID_SQUARE_SIZE + boundsX) &&
+                                        bbY < (nextTargetRect.y * GRID_SQUARE_SIZE + boundsY) &&
+                                        bbW > (nextTargetRect.width * GRID_SQUARE_SIZE) &&
+                                        bbH > (nextTargetRect.height * GRID_SQUARE_SIZE);
             
             polygonIsTouchingRect = isWithinOuterRect && isOutsideInnerRect;
-            // && isOutsideInnerRect
-            
-            // print out ... is within outer rect, is outside inner rect
-            /*if (moveTarget ||
-                (polygonIsTouchingRect && targetLerpPercent >= 1.)) {
-                prevTargetRect = nextTargetRect;
-                targetLerpPercent = 0;
-                updateTargets();
-            }*/
         }
     }
     
