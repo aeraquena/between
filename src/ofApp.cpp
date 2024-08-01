@@ -44,7 +44,7 @@ void ofApp::setup() {
     gui.setup();
     
     // Scale value of projection resolution to Kinect resolution
-    scaleVal = 2; //3
+    scaleVal = 3; //2
     
     // Set Kinect depth detection thresholds
     gui.add(roiX.setup("roi x", 128, 0, 640));
@@ -82,7 +82,7 @@ void ofApp::setup() {
     gui.add(fboLeft.setup("fbo left", 88, -300, 400));
     gui.add(fboTop.setup("fbo top", 0, -200, 300));
     gui.add(shapeFboTop.setup("shape fbo top", 356, -400, 400));
-    gui.add(shapeFboLeft.setup("shape fbo left", 556, -200, 700));
+    gui.add(shapeFboLeft.setup("shape fbo left", 281, -200, 700));
     
     // Shoes position - optional
     gui.add(shoesX.setup("shoes x", -1800, -2500, 0));
@@ -115,8 +115,8 @@ void ofApp::setup() {
      ***********************/
 
     // Projection dimensions
-    PROJECTION_WIDTH = 1920;
-    PROJECTION_HEIGHT = 1200;
+    PROJECTION_WIDTH = 2880;
+    PROJECTION_HEIGHT = 1800;
 
     finalFbo.allocate(PROJECTION_WIDTH,PROJECTION_HEIGHT);
     targetFbo.allocate(PROJECTION_WIDTH,PROJECTION_HEIGHT);
@@ -510,7 +510,7 @@ void ofApp::draw() {
                 (thisPoint.x >= roiW - edgeRange && thisPoint.x <= roiW + edgeRange) ||
                 (thisPoint.y >= 0 && thisPoint.y <= edgeRange) ||
                 (thisPoint.y >= roiH - edgeRange && thisPoint.y <= roiH + edgeRange))) {
-               contourPolyline.addVertex(thisPoint);
+               contourPolyline.addVertex(thisPoint); // can do scaleVal here?
             } else {
                 // mark as touching edge
                 touchingEdge = true;
@@ -543,7 +543,7 @@ void ofApp::draw() {
             textureFbos[i].draw(0,0);
         }
         
-        // TODO: min(PROJECTION_WIDTH,
+        // TODO: min(PROJECTION_WIDTH, ... remove this!
         contourPolyline.scale((float) scaleVal, (float) scaleVal); // how do we scale with min?
         ofVec2f myTranslateVector;
         myTranslateVector.x = shapeFboLeft;
