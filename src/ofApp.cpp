@@ -44,25 +44,25 @@ void ofApp::setup() {
     gui.setup();
     
     // Scale value of projection resolution to Kinect resolution
-    scaleVal = 2;
+    scaleVal = 2; //3
     
     // Set Kinect depth detection thresholds
-    gui.add(roiX.setup("roi x", 67, 0, 640));
-    gui.add(roiY.setup("roi y", 57, 0, 480));
-    gui.add(roiW.setup("roi w", 525, 0, 640));
-    gui.add(roiH.setup("roi h", 350, 0, 480));
+    gui.add(roiX.setup("roi x", 128, 0, 640));
+    gui.add(roiY.setup("roi y", 28, 0, 480));
+    gui.add(roiW.setup("roi w", 412, 0, 640));
+    gui.add(roiH.setup("roi h", 254, 0, 480));
     
     // Bounds parameters
-    gui.add(boundsX.setup("bounds x", 258, 0, 500));
-    gui.add(boundsY.setup("bounds y", 40, 0, 500));
-    gui.add(boundsW.setup("bounds w", 1648, 400, 2000));
-    gui.add(leftBoundsDiff.setup("right bounds diff", -84, -170, 0)); // inverted intentionally
-    gui.add(rightBoundsDiff.setup("left bounds diff", -104, -104, 0));
-    gui.add(boundsH.setup("bounds h", 882, 220, 1280));
+    gui.add(boundsX.setup("bounds x", 0, 0, 500));
+    gui.add(boundsY.setup("bounds y", 95, 0, 500));
+    gui.add(boundsW.setup("bounds w", 1880, 400, 2000));
+    gui.add(leftBoundsDiff.setup("right bounds diff", 0, -170, 0)); // inverted intentionally
+    gui.add(rightBoundsDiff.setup("left bounds diff", 0, -104, 0));
+    gui.add(boundsH.setup("bounds h", 1100, 220, 1280));
     
     // Depth thresholds
-    gui.add(minNearThreshold.setup("min near threshold", 149, 0, 255));
-    gui.add(maxNearThreshold.setup("max near threshold", 153, 0, 255));
+    gui.add(minNearThreshold.setup("min near threshold", 255, 0, 255));
+    gui.add(maxNearThreshold.setup("max near threshold", 255, 0, 255));
     gui.add(minFarThreshold.setup("min far threshold", 0, 0, 255));
     gui.add(maxFarThreshold.setup("max far threshold", 0, 0, 255));
     
@@ -74,14 +74,14 @@ void ofApp::setup() {
     // Smoothing values for blobs
     gui.add(smoothingSize.setup("smoothing size", 11, 0, 100));
     gui.add(smoothingShape.setup("smoothing shape", 0, 0, 1));
-    gui.add(blurValue.setup("blur value", 25, 0, 100)); // must be an odd number
-    gui.add(blurThreshold.setup("blur threshold", 247, 0, 255));
+    gui.add(blurValue.setup("blur value", 61, 0, 100)); // must be an odd number
+    gui.add(blurThreshold.setup("blur threshold", 182, 0, 255));
 
     // Position of shape and target FBOs
     // To align silhouettes with bodies
     gui.add(fboLeft.setup("fbo left", 88, -300, 400));
     gui.add(fboTop.setup("fbo top", 0, -200, 300));
-    gui.add(shapeFboTop.setup("shape fbo top", 167, -400, 400));
+    gui.add(shapeFboTop.setup("shape fbo top", 356, -400, 400));
     gui.add(shapeFboLeft.setup("shape fbo left", 556, -200, 700));
     
     // Shoes position - optional
@@ -91,18 +91,18 @@ void ofApp::setup() {
     gui.add(shoesScale2.setup("shoes scale 2", .22, 0., 1.));
     
     // Text position
-    gui.add(textX.setup("text x", -3860, -4000, -3000)); // Default text
-    gui.add(textX2.setup("text x2", -3825, -4000, -3000)); // Text when inner polygon appears
-    gui.add(textY.setup("text y", -2170, -4000, 2000));
+    gui.add(textX.setup("text x", 640, 0, 1000)); // Default text
+    gui.add(textX2.setup("text x2", 685, 0, 1000)); // Text when inner polygon appears
+    gui.add(textY.setup("text y", 159, 0, 300));
     
     // Target rectangle bounds
-    gui.add(xOffset.setup("x offset",5,0,20)); // the x value where we should start generating INNER shapes
-    gui.add(yOffset.setup("y offset",2,0,12));
-    gui.add(xRange.setup("x range",4,0,20)); // the range of the play area x must be at least 3 (min square size)
+    gui.add(xOffset.setup("x offset",7,0,20)); // the x value where we should start generating INNER shapes
+    gui.add(yOffset.setup("y offset",4,0,12));
+    gui.add(xRange.setup("x range",5,0,20)); // the range of the play area x must be at least 3 (min square size)
     gui.add(yRange.setup("y range",4,0,12));
     
     // Grid square size
-    gui.add(GRID_SQUARE_SIZE.setup("grid square size",125,40,200));
+    gui.add(GRID_SQUARE_SIZE.setup("grid square size",100,40,200));
     
     // Hide controls
     bHide = false;
@@ -258,6 +258,9 @@ void ofApp::update() {
                 pix[i] = 0;
             }
         }
+        
+        // Invert - for far Kinect
+        grayImage.invert();
         
         // Update the CV images
         grayImage.flagImageChanged();
@@ -464,6 +467,7 @@ void ofApp::draw() {
     
     // Draw grid lines
     // Put back if needed
+    // TODO: This is probably causing malloc error
     
     /*ofPushStyle();
     ofNoFill();
@@ -527,8 +531,8 @@ void ofApp::draw() {
             
             ofBeginShape();
             for( int i = 0; i < cur.getVertices().size(); i++) {
-                ofVertex(cur.getVertices().at(i).x * scaleVal + shapeFboLeft,
-                         cur.getVertices().at(i).y * scaleVal + shapeFboTop);
+                ofVertex(min(PROJECTION_WIDTH, (int) cur.getVertices().at(i).x * scaleVal + shapeFboLeft),
+                         min(PROJECTION_HEIGHT, (int) cur.getVertices().at(i).y * scaleVal + shapeFboTop));
             }
             ofEndShape(true);
             
@@ -539,7 +543,8 @@ void ofApp::draw() {
             textureFbos[i].draw(0,0);
         }
         
-        contourPolyline.scale((float) scaleVal, (float) scaleVal);
+        // TODO: min(PROJECTION_WIDTH,
+        contourPolyline.scale((float) scaleVal, (float) scaleVal); // how do we scale with min?
         ofVec2f myTranslateVector;
         myTranslateVector.x = shapeFboLeft;
         myTranslateVector.y = shapeFboTop;
@@ -654,17 +659,17 @@ void ofApp::draw() {
     ofScale(shoesScale);
     //shoes.draw(shoesX + 600,shoesY);
     
-    ofRotateDeg(180);
+    //ofRotateDeg(180);
     
     // blink
     ofSetColor(255,255,255,ofMap(lerpedOpacity, 140, 180, 180, 255));
     ofSetColor(255,255,255);
     
-    if (triangulationVisible) {
+    //if (triangulationVisible) {
         franklinBook.drawString("NOW FIT THE POLYGON INTO THE GRAY AREA", textX2, textY);
-    } else {
+    /*} else {
         franklinBook.drawString("KNEEL FACE TO FACE AND TOUCH BOTH HANDS", textX-50, textY);
-    }
+    }*/
     ofPopMatrix();
     
     finalFbo.end();
