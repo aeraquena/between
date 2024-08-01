@@ -47,18 +47,18 @@ void ofApp::setup() {
     scaleVal = 3; //2
     
     // Set Kinect depth detection thresholds
-    gui.add(roiX.setup("roi x", 128, 0, 640));
-    gui.add(roiY.setup("roi y", 28, 0, 480));
-    gui.add(roiW.setup("roi w", 412, 0, 640));
-    gui.add(roiH.setup("roi h", 254, 0, 480));
+    gui.add(roiX.setup("roi x", 86, 0, 640));
+    gui.add(roiY.setup("roi y", 2, 0, 480));
+    gui.add(roiW.setup("roi w", 550, 0, 640));
+    gui.add(roiH.setup("roi h", 391, 0, 480));
     
     // Bounds parameters
-    gui.add(boundsX.setup("bounds x", 0, 0, 500));
-    gui.add(boundsY.setup("bounds y", 95, 0, 500));
-    gui.add(boundsW.setup("bounds w", 1880, 400, 2000));
+    gui.add(boundsX.setup("bounds x", 230, 0, 500));
+    gui.add(boundsY.setup("bounds y", 240, 0, 500));
+    gui.add(boundsW.setup("bounds w", 1536, 400, 2000));
     gui.add(leftBoundsDiff.setup("right bounds diff", 0, -170, 0)); // inverted intentionally
     gui.add(rightBoundsDiff.setup("left bounds diff", 0, -104, 0));
-    gui.add(boundsH.setup("bounds h", 1100, 220, 1280));
+    gui.add(boundsH.setup("bounds h", 956, 220, 1280));
     
     // Depth thresholds
     gui.add(minNearThreshold.setup("min near threshold", 255, 0, 255));
@@ -67,22 +67,22 @@ void ofApp::setup() {
     gui.add(maxFarThreshold.setup("max far threshold", 0, 0, 255));
     
     // Blob values
-    gui.add(minBlobArea.setup("min blob area", 500, 500, 30000));
+    gui.add(minBlobArea.setup("min blob area", 1000, 500, 30000));
     gui.add(maxBlobArea.setup("max blob area", (roiW * roiH) - 4000, 0, roiW * roiH));
     gui.add(maxBlobNum.setup("max blob num", 6, 1, 50));
     
     // Smoothing values for blobs
     gui.add(smoothingSize.setup("smoothing size", 11, 0, 100));
     gui.add(smoothingShape.setup("smoothing shape", 0, 0, 1));
-    gui.add(blurValue.setup("blur value", 61, 0, 100)); // must be an odd number
-    gui.add(blurThreshold.setup("blur threshold", 182, 0, 255));
+    gui.add(blurValue.setup("blur value", 9, 0, 100)); // must be an odd number
+    gui.add(blurThreshold.setup("blur threshold", 173, 0, 255));
 
     // Position of shape and target FBOs
     // To align silhouettes with bodies
     gui.add(fboLeft.setup("fbo left", 88, -300, 400));
     gui.add(fboTop.setup("fbo top", 0, -200, 300));
-    gui.add(shapeFboTop.setup("shape fbo top", 356, -400, 400));
-    gui.add(shapeFboLeft.setup("shape fbo left", 281, -200, 700));
+    gui.add(shapeFboTop.setup("shape fbo top", 200, -400, 400));
+    gui.add(shapeFboLeft.setup("shape fbo left", 206, -200, 700));
     
     // Shoes position - optional
     gui.add(shoesX.setup("shoes x", -1800, -2500, 0));
@@ -91,14 +91,14 @@ void ofApp::setup() {
     gui.add(shoesScale2.setup("shoes scale 2", .22, 0., 1.));
     
     // Text position
-    gui.add(textX.setup("text x", 640, 0, 1000)); // Default text
-    gui.add(textX2.setup("text x2", 685, 0, 1000)); // Text when inner polygon appears
-    gui.add(textY.setup("text y", 159, 0, 300));
+    gui.add(textX.setup("text x", 795, 0, 1000)); // Default text
+    gui.add(textX2.setup("text x2", 845, 0, 1000)); // Text when inner polygon appears
+    gui.add(textY.setup("text y", 490, 0, 500));
     
     // Target rectangle bounds
-    gui.add(xOffset.setup("x offset",7,0,20)); // the x value where we should start generating INNER shapes
-    gui.add(yOffset.setup("y offset",4,0,12));
-    gui.add(xRange.setup("x range",5,0,20)); // the range of the play area x must be at least 3 (min square size)
+    gui.add(xOffset.setup("x offset",6,0,20)); // the x value where we should start generating INNER shapes
+    gui.add(yOffset.setup("y offset",3,0,12));
+    gui.add(xRange.setup("x range",4,0,20)); // the range of the play area x must be at least 3 (min square size)
     gui.add(yRange.setup("y range",4,0,12));
     
     // Grid square size
@@ -305,6 +305,8 @@ void ofApp::update() {
          * MARK: Targets *
          *****************/
         
+        // set to false first, to account for no bounding boxes
+        polygonIsTouchingRect = false;
         // Compare ALL the current bounding boxes (which are stored in a vector) against the target
         for (int i = 0; i < boundingBoxes.size(); i++) {
             int bbX = boundingBoxes[i].x;
@@ -412,22 +414,22 @@ void ofApp::draw() {
     // Fade target rectangle in and out when no one is playing
     // Get lerped opacity (scale)
     int frameNum = ofGetFrameNum() % 120;
-    int lerpedOpacity = 140;
+    int lerpedOpacity = 170;
     if (contourFinder.nBlobs == 0) {
         if (frameNum < 60) {
             lerpedOpacity =
             ofMap(frameNum,
                     0,
                     60,
-                    140,
-                    180,
+                    170,
+                    210,
                     true);
         } else {
             lerpedOpacity = ofMap(frameNum,
                     60,
                     120,
-                    180,
-                    140,
+                    210,
+                    170,
                     true);
         }
     }
@@ -563,7 +565,7 @@ void ofApp::draw() {
             // TODO: Not sure what oldRange and newRange values represent
             // range is 500 - 25000. absolute biggest would be 50000
             int oldRange = 25000-500; // Blob size?
-            int newRange = 10-3; // Resampling count?
+            int newRange = 15; // Resampling count? //10 - 3 = 7
             // scales one range to another
             int newValue = ceil((((holeArea - 500) * newRange) / oldRange) + 3);
             
@@ -665,11 +667,11 @@ void ofApp::draw() {
     ofSetColor(255,255,255,ofMap(lerpedOpacity, 140, 180, 180, 255));
     ofSetColor(255,255,255);
     
-    //if (triangulationVisible) {
+    if (triangulationVisible) {
         franklinBook.drawString("NOW FIT THE POLYGON INTO THE GRAY AREA", textX2, textY);
-    /*} else {
+    } else {
         franklinBook.drawString("KNEEL FACE TO FACE AND TOUCH BOTH HANDS", textX-50, textY);
-    }*/
+    }
     ofPopMatrix();
     
     finalFbo.end();
@@ -688,6 +690,7 @@ void ofApp::draw() {
     
     // Draw a shape at target
     if (moveTarget || (polygonIsTouchingRect && targetLerpPercent >= 1.)) {
+        // TODO: Print the above variables, figure out how to print bools
         // Calculate new targets
         prevTargetRect = nextTargetRect;
         targetLerpPercent = 0;
@@ -1023,7 +1026,7 @@ void ofApp::draw() {
     finalFbo.draw(SCREEN_WIDTH + fboLeft, fboTop);
     
     // Draw targets
-    targetFbo.draw(SCREEN_WIDTH + fboLeft, fboTop);
+    targetFbo.draw(SCREEN_WIDTH + fboLeft + 35, fboTop);
     
     ofPopMatrix();
     
@@ -1041,7 +1044,9 @@ void ofApp::exit() {
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
-    moveTarget = true;
+    if (!moveTarget) {
+        moveTarget = true;
+    }
 }
 
 //--------------------------------------------------------------
@@ -1087,7 +1092,9 @@ void ofApp::keyPressed (int key) {
             
         case ' ':
             // Press space to manually move target
-            moveTarget = true;
+            if (!moveTarget) {
+                moveTarget = true;
+            }
             break;
     }
 }
