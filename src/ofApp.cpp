@@ -15,7 +15,7 @@ void ofApp::setup() {
     // 2. Depth video
     // 3. Threshold
     // 4. Contour
-    videoMode = 3;
+    videoMode = 4;
     
     // Set frame rate
     ofSetFrameRate(60);
@@ -67,7 +67,7 @@ void ofApp::setup() {
     gui.add(maxFarThreshold.setup("max far threshold", 0, 0, 255));
     
     // Blob values
-    gui.add(minBlobArea.setup("min blob area", 1000, 500, 30000));
+    gui.add(minBlobArea.setup("min blob area", 2000, 500, 30000));
     gui.add(maxBlobArea.setup("max blob area", (roiW * roiH) - 4000, 0, roiW * roiH));
     gui.add(maxBlobNum.setup("max blob num", 6, 1, 50));
     
