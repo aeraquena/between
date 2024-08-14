@@ -44,7 +44,7 @@ void ofApp::setup() {
     gui.setup();
     
     // Scale value of projection resolution to Kinect resolution
-    scaleVal = 3; //2
+    scaleVal = 2; //2
     
     // Set Kinect depth detection thresholds
     gui.add(roiX.setup("roi x", 86, 0, 640));
@@ -61,8 +61,8 @@ void ofApp::setup() {
     gui.add(boundsH.setup("bounds h", 956, 220, 1280));
     
     // Depth thresholds
-    gui.add(minNearThreshold.setup("min near threshold", 255, 0, 255));
-    gui.add(maxNearThreshold.setup("max near threshold", 255, 0, 255));
+    gui.add(minNearThreshold.setup("min near threshold", 100, 0, 255));
+    gui.add(maxNearThreshold.setup("max near threshold", 100, 0, 255));
     gui.add(minFarThreshold.setup("min far threshold", 0, 0, 255));
     gui.add(maxFarThreshold.setup("max far threshold", 0, 0, 255));
     
@@ -115,6 +115,7 @@ void ofApp::setup() {
      ***********************/
 
     // Projection dimensions
+    // TODO: Scale to actual projection dimensions
     PROJECTION_WIDTH = 2880;
     PROJECTION_HEIGHT = 1800;
 
@@ -260,7 +261,7 @@ void ofApp::update() {
         }
         
         // Invert - for far Kinect
-        grayImage.invert();
+        //grayImage.invert();
         
         // Update the CV images
         grayImage.flagImageChanged();
@@ -469,18 +470,19 @@ void ofApp::draw() {
     
     // Draw grid lines
     // Put back if needed
-    // TODO: This is probably causing malloc error
+    // TODO: This is probably causing malloc error... but maybe not since projection width increased
+    // Could put min()
     
-    /*ofPushStyle();
+    ofPushStyle();
     ofNoFill();
     ofSetColor(255,255,255);
     ofSetLineWidth(1);
-    for (int i = boundsX; i < boundsW+GRID_SQUARE_SIZE*2; i+=GRID_SQUARE_SIZE) {
+    for (int i = boundsX; i < min(PROJECTION_WIDTH,boundsW+GRID_SQUARE_SIZE*2); i+=GRID_SQUARE_SIZE) {
         for (int j = boundsY; j < boundsH; j+=GRID_SQUARE_SIZE) {
             ofDrawRectangle(i, j, GRID_SQUARE_SIZE, GRID_SQUARE_SIZE);
         }
     }
-    ofPopStyle();*/
+    ofPopStyle();
     
     /**************************
      * MARK: Draw silhouettes *
@@ -565,7 +567,7 @@ void ofApp::draw() {
             // TODO: Not sure what oldRange and newRange values represent
             // range is 500 - 25000. absolute biggest would be 50000
             int oldRange = 25000-500; // Blob size?
-            int newRange = 15; // Resampling count? //10 - 3 = 7
+            int newRange = 7; // Resampling count? //10 - 3 = 7. 15 for further Kinect
             // scales one range to another
             int newValue = ceil((((holeArea - 500) * newRange) / oldRange) + 3);
             
