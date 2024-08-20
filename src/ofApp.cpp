@@ -50,8 +50,8 @@ void ofApp::setup() {
     // this should be wider than86the play area
     gui.add(roiX.setup("roi x", 22, 0, 640));
     gui.add(roiY.setup("roi y", 43, 0, 480));
-    gui.add(roiW.setup("roi w", 553, 0, 640));
-    gui.add(roiH.setup("roi h", 408, 0, 480));
+    gui.add(roiW.setup("roi w", 518, 0, 640));
+    gui.add(roiH.setup("roi h", 400, 0, 480));
     
     // Bounds parameters
     gui.add(boundsX.setup("bounds x", 237, 0, 500));
@@ -62,7 +62,7 @@ void ofApp::setup() {
     gui.add(boundsH.setup("bounds h", 900, 220, 1280));
     
     // Depth thresholds
-    gui.add(minNearThreshold.setup("min near threshold", 113, 0, 255));
+    gui.add(minNearThreshold.setup("min near threshold", 98, 0, 255));
     gui.add(maxNearThreshold.setup("max near threshold", 113, 0, 255));
     gui.add(minFarThreshold.setup("min far threshold", 57, 0, 255));
     gui.add(maxFarThreshold.setup("max far threshold", 98, 0, 255));
