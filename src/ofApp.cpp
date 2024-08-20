@@ -47,25 +47,25 @@ void ofApp::setup() {
     scaleVal = 2; //2
     
     // Set Kinect depth detection thresholds
-    // this should be wider than the play area
-    gui.add(roiX.setup("roi x", 64, 0, 640));
-    gui.add(roiY.setup("roi y", 86, 0, 480));
-    gui.add(roiW.setup("roi w", 416, 0, 640));
-    gui.add(roiH.setup("roi h", 314, 0, 480));
+    // this should be wider than86the play area
+    gui.add(roiX.setup("roi x", 22, 0, 640));
+    gui.add(roiY.setup("roi y", 43, 0, 480));
+    gui.add(roiW.setup("roi w", 553, 0, 640));
+    gui.add(roiH.setup("roi h", 408, 0, 480));
     
     // Bounds parameters
-    gui.add(boundsX.setup("bounds x", 130, 0, 500));
-    gui.add(boundsY.setup("bounds y", 240, 0, 500));
-    gui.add(boundsW.setup("bounds w", 1744, 400, 2000));
+    gui.add(boundsX.setup("bounds x", 237, 0, 500));
+    gui.add(boundsY.setup("bounds y", 265, 0, 500));
+    gui.add(boundsW.setup("bounds w", 1600, 400, 2000));
     gui.add(leftBoundsDiff.setup("right bounds diff", 0, -170, 0)); // inverted intentionally
     gui.add(rightBoundsDiff.setup("left bounds diff", 0, -104, 0));
-    gui.add(boundsH.setup("bounds h", 956, 220, 1280));
+    gui.add(boundsH.setup("bounds h", 861, 220, 1280));
     
     // Depth thresholds
-    gui.add(minNearThreshold.setup("min near threshold", 100, 0, 255));
-    gui.add(maxNearThreshold.setup("max near threshold", 100, 0, 255));
-    gui.add(minFarThreshold.setup("min far threshold", 0, 0, 255));
-    gui.add(maxFarThreshold.setup("max far threshold", 0, 0, 255));
+    gui.add(minNearThreshold.setup("min near threshold", 113, 0, 255));
+    gui.add(maxNearThreshold.setup("max near threshold", 113, 0, 255));
+    gui.add(minFarThreshold.setup("min far threshold", 57, 0, 255));
+    gui.add(maxFarThreshold.setup("max far threshold", 98, 0, 255));
     
     // Blob values
     gui.add(minBlobArea.setup("min blob area", 2000, 500, 30000));
@@ -75,17 +75,15 @@ void ofApp::setup() {
     // Smoothing values for blobs
     gui.add(smoothingSize.setup("smoothing size", 11, 0, 100));
     gui.add(smoothingShape.setup("smoothing shape", 0, 0, 1));
-    gui.add(blurValue.setup("blur value", 25, 0, 100)); // must be an odd number
-    gui.add(blurThreshold.setup("blur threshold", 132, 0, 255));
+    gui.add(blurValue.setup("blur value", 51, 0, 100)); // must be an odd number
+    gui.add(blurThreshold.setup("blur threshold", 177, 0, 255));
 
     // Position of shape and target FBOs
     // To align silhouettes with bodies
-    //gui.add(fboLeft.setup("fbo left", 88, -300, 400));
-    //gui.add(fboTop.setup("fbo top", 0, -200, 300));
     gui.add(fboLeft.setup("fbo left", -4970, -5000, -2000));
     gui.add(fboTop.setup("fbo top", -1310, -2000, 0));
-    gui.add(shapeFboTop.setup("shape fbo top", 200, -400, 1000));
-    gui.add(shapeFboLeft.setup("shape fbo left", 206, -200, 1500));
+    gui.add(shapeFboTop.setup("shape fbo top", 286, -400, 1000));
+    gui.add(shapeFboLeft.setup("shape fbo left", 386, -200, 1500));
     
     // Shoes position - optional
     gui.add(shoesX.setup("shoes x", -1800, -2500, 0));
@@ -94,9 +92,9 @@ void ofApp::setup() {
     gui.add(shoesScale2.setup("shoes scale 2", .22, 0., 1.));
     
     // Text position
-    gui.add(textX.setup("text x", 795, 0, 1000)); // Default text
-    gui.add(textX2.setup("text x2", 845, 0, 1000)); // Text when inner polygon appears
-    gui.add(textY.setup("text y", 490, 0, 500));
+    gui.add(textX.setup("text x", -3830, -2000, -5000)); // Default text
+    gui.add(textX2.setup("text x2", -3815, -2000, -5000)); // Text when inner polygon appears
+    gui.add(textY.setup("text y", -2610, -2000, -4000));
     
     // Target rectangle bounds
     gui.add(xOffset.setup("x offset",6,0,20)); // the x value where we should start generating INNER shapes
@@ -256,6 +254,8 @@ void ofApp::update() {
             // Calculate row, then calculate near threshold based on row
             int thisNearThreshold = ofMap(row, roiY, roiY+roiH, minNearThreshold, maxNearThreshold, true);
             
+            // if pix is black, ignore - make it 255?
+            // far threshold should be smaller than near threshold
             if(pix[i] < thisNearThreshold && pix[i] > thisFarThreshold) {
                 pix[i] = 255;
             } else {
@@ -476,7 +476,7 @@ void ofApp::draw() {
     // TODO: This is probably causing malloc error... but maybe not since projection width increased
     // Could put min()
     
-    ofPushStyle();
+    /*ofPushStyle();
     ofNoFill();
     ofSetColor(255,255,255);
     ofSetLineWidth(1);
@@ -485,7 +485,7 @@ void ofApp::draw() {
             ofDrawRectangle(i, j, GRID_SQUARE_SIZE, GRID_SQUARE_SIZE);
         }
     }
-    ofPopStyle();
+    ofPopStyle();*/
     
     /**************************
      * MARK: Draw silhouettes *
@@ -666,7 +666,7 @@ void ofApp::draw() {
     ofScale(shoesScale);
     //shoes.draw(shoesX + 600,shoesY);
     
-    //ofRotateDeg(180);
+    ofRotateDeg(180);
     
     // blink
     ofSetColor(255,255,255,ofMap(lerpedOpacity, 140, 180, 180, 255));
