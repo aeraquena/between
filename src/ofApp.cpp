@@ -47,15 +47,16 @@ void ofApp::setup() {
     scaleVal = 2; //2
     
     // Set Kinect depth detection thresholds
-    gui.add(roiX.setup("roi x", 86, 0, 640));
-    gui.add(roiY.setup("roi y", 2, 0, 480));
-    gui.add(roiW.setup("roi w", 550, 0, 640));
-    gui.add(roiH.setup("roi h", 391, 0, 480));
+    // this should be wider than the play area
+    gui.add(roiX.setup("roi x", 64, 0, 640));
+    gui.add(roiY.setup("roi y", 86, 0, 480));
+    gui.add(roiW.setup("roi w", 416, 0, 640));
+    gui.add(roiH.setup("roi h", 314, 0, 480));
     
     // Bounds parameters
-    gui.add(boundsX.setup("bounds x", 230, 0, 500));
+    gui.add(boundsX.setup("bounds x", 130, 0, 500));
     gui.add(boundsY.setup("bounds y", 240, 0, 500));
-    gui.add(boundsW.setup("bounds w", 1536, 400, 2000));
+    gui.add(boundsW.setup("bounds w", 1744, 400, 2000));
     gui.add(leftBoundsDiff.setup("right bounds diff", 0, -170, 0)); // inverted intentionally
     gui.add(rightBoundsDiff.setup("left bounds diff", 0, -104, 0));
     gui.add(boundsH.setup("bounds h", 956, 220, 1280));
@@ -74,15 +75,17 @@ void ofApp::setup() {
     // Smoothing values for blobs
     gui.add(smoothingSize.setup("smoothing size", 11, 0, 100));
     gui.add(smoothingShape.setup("smoothing shape", 0, 0, 1));
-    gui.add(blurValue.setup("blur value", 9, 0, 100)); // must be an odd number
-    gui.add(blurThreshold.setup("blur threshold", 173, 0, 255));
+    gui.add(blurValue.setup("blur value", 25, 0, 100)); // must be an odd number
+    gui.add(blurThreshold.setup("blur threshold", 132, 0, 255));
 
     // Position of shape and target FBOs
     // To align silhouettes with bodies
-    gui.add(fboLeft.setup("fbo left", 88, -300, 400));
-    gui.add(fboTop.setup("fbo top", 0, -200, 300));
-    gui.add(shapeFboTop.setup("shape fbo top", 200, -400, 400));
-    gui.add(shapeFboLeft.setup("shape fbo left", 206, -200, 700));
+    //gui.add(fboLeft.setup("fbo left", 88, -300, 400));
+    //gui.add(fboTop.setup("fbo top", 0, -200, 300));
+    gui.add(fboLeft.setup("fbo left", -4970, -5000, -2000));
+    gui.add(fboTop.setup("fbo top", -1310, -2000, 0));
+    gui.add(shapeFboTop.setup("shape fbo top", 200, -400, 1000));
+    gui.add(shapeFboLeft.setup("shape fbo left", 206, -200, 1500));
     
     // Shoes position - optional
     gui.add(shoesX.setup("shoes x", -1800, -2500, 0));
@@ -1025,11 +1028,15 @@ void ofApp::draw() {
     ofPushMatrix();
     
     // Draw shapes
+    // Turn around 180
+    
+    ofRotateDeg(180);
+    // we need to rotate it in place
     finalFbo.draw(SCREEN_WIDTH + fboLeft, fboTop);
+    
     
     // Draw targets
     targetFbo.draw(SCREEN_WIDTH + fboLeft + 35, fboTop);
-    
     ofPopMatrix();
     
     // Draw GUI
