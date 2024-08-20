@@ -157,6 +157,10 @@ public:
     ofxIntSlider leftBoundsDiff;
     ofxIntSlider rightBoundsDiff;
     
+    // Grid offset - so it matches target
+    ofxIntSlider gridXOffset;
+    ofxIntSlider gridYOffset;
+    
     /**************
      * MARK: Text *
      **************/

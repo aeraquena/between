@@ -59,7 +59,7 @@ void ofApp::setup() {
     gui.add(boundsW.setup("bounds w", 1600, 400, 2000));
     gui.add(leftBoundsDiff.setup("right bounds diff", 0, -170, 0)); // inverted intentionally
     gui.add(rightBoundsDiff.setup("left bounds diff", 0, -104, 0));
-    gui.add(boundsH.setup("bounds h", 861, 220, 1280));
+    gui.add(boundsH.setup("bounds h", 900, 220, 1280));
     
     // Depth thresholds
     gui.add(minNearThreshold.setup("min near threshold", 113, 0, 255));
@@ -94,7 +94,7 @@ void ofApp::setup() {
     // Text position
     gui.add(textX.setup("text x", -3830, -2000, -5000)); // Default text
     gui.add(textX2.setup("text x2", -3815, -2000, -5000)); // Text when inner polygon appears
-    gui.add(textY.setup("text y", -2610, -2000, -4000));
+    gui.add(textY.setup("text y", -2720, -2000, -4000));
     
     // Target rectangle bounds
     gui.add(xOffset.setup("x offset",6,0,20)); // the x value where we should start generating INNER shapes
@@ -104,6 +104,10 @@ void ofApp::setup() {
     
     // Grid square size
     gui.add(GRID_SQUARE_SIZE.setup("grid square size",100,40,200));
+    
+    // Grid offset
+    gui.add(gridXOffset.setup("grid x offset", 35, -200, 200));
+    gui.add(gridYOffset.setup("grid y offset", 0, 0, 400));
     
     // Hide controls
     bHide = false;
@@ -256,7 +260,9 @@ void ofApp::update() {
             
             // if pix is black, ignore - make it 255?
             // far threshold should be smaller than near threshold
-            if(pix[i] < thisNearThreshold && pix[i] > thisFarThreshold) {
+            if(pix[i] == 00) {
+                pix[i] = 255; // if black, make white to ignore visual noise
+            } else if(pix[i] < thisNearThreshold && pix[i] > thisFarThreshold) {
                 pix[i] = 255;
             } else {
                 pix[i] = 0;
@@ -476,16 +482,16 @@ void ofApp::draw() {
     // TODO: This is probably causing malloc error... but maybe not since projection width increased
     // Could put min()
     
-    /*ofPushStyle();
+    ofPushStyle();
     ofNoFill();
     ofSetColor(255,255,255);
     ofSetLineWidth(1);
     for (int i = boundsX; i < min(PROJECTION_WIDTH,boundsW+GRID_SQUARE_SIZE*2); i+=GRID_SQUARE_SIZE) {
-        for (int j = boundsY; j < boundsH; j+=GRID_SQUARE_SIZE) {
-            ofDrawRectangle(i, j, GRID_SQUARE_SIZE, GRID_SQUARE_SIZE);
+        for (int j = boundsY; j < min(PROJECTION_HEIGHT,boundsH+GRID_SQUARE_SIZE*2); j+=GRID_SQUARE_SIZE) {
+            ofDrawRectangle(i + gridXOffset, j + gridYOffset, GRID_SQUARE_SIZE, GRID_SQUARE_SIZE);
         }
     }
-    ofPopStyle();*/
+    ofPopStyle();
     
     /**************************
      * MARK: Draw silhouettes *
@@ -529,8 +535,8 @@ void ofApp::draw() {
         contourPolyline = contourPolyline.getSmoothed(20, smoothingShape);
         
         // Copy polyline into path so it can be filled
-        // Ignore drawing blob if touching edge (optional)
-        if (i < NUM_SHAPE_FBOS && !touchingEdge) {
+        // Commented out: Ignore drawing blob if touching edge (optional)
+        if (i < NUM_SHAPE_FBOS) { // && !touchingEdge
             shapeFbos[i].begin();
             
             ofClear(0,0,0,0);
