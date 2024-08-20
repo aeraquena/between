@@ -529,7 +529,8 @@ void ofApp::draw() {
         contourPolyline = contourPolyline.getSmoothed(20, smoothingShape);
         
         // Copy polyline into path so it can be filled
-        if (i < NUM_SHAPE_FBOS) {
+        // Ignore drawing blob if touching edge (optional)
+        if (i < NUM_SHAPE_FBOS && !touchingEdge) {
             shapeFbos[i].begin();
             
             ofClear(0,0,0,0);
