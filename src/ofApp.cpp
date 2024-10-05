@@ -49,23 +49,23 @@ void ofApp::setup() {
     // Set Kinect depth detection thresholds
     // this should be wider than86the play area
     gui.add(roiX.setup("roi x", 22, 0, 640));
-    gui.add(roiY.setup("roi y", 43, 0, 480));
-    gui.add(roiW.setup("roi w", 518, 0, 640));
-    gui.add(roiH.setup("roi h", 400, 0, 480));
+    gui.add(roiY.setup("roi y", 40, 0, 480));
+    gui.add(roiW.setup("roi w", 579, 0, 640));
+    gui.add(roiH.setup("roi h", 415, 0, 480));
     
     // Bounds parameters
-    gui.add(boundsX.setup("bounds x", 237, 0, 500));
-    gui.add(boundsY.setup("bounds y", 265, 0, 500));
-    gui.add(boundsW.setup("bounds w", 1600, 400, 2000));
+    gui.add(boundsX.setup("bounds x", 335, 0, 500));
+    gui.add(boundsY.setup("bounds y", 290, 0, 500));
+    gui.add(boundsW.setup("bounds w", 1440, 400, 2000));
     gui.add(leftBoundsDiff.setup("right bounds diff", 0, -170, 0)); // inverted intentionally
     gui.add(rightBoundsDiff.setup("left bounds diff", 0, -104, 0));
-    gui.add(boundsH.setup("bounds h", 900, 220, 1280));
+    gui.add(boundsH.setup("bounds h", 803, 220, 1280));
     
     // Depth thresholds
-    gui.add(minNearThreshold.setup("min near threshold", 98, 0, 255));
-    gui.add(maxNearThreshold.setup("max near threshold", 113, 0, 255));
-    gui.add(minFarThreshold.setup("min far threshold", 57, 0, 255));
-    gui.add(maxFarThreshold.setup("max far threshold", 98, 0, 255));
+    gui.add(minNearThreshold.setup("min near threshold", 90, 0, 255));
+    gui.add(maxNearThreshold.setup("max near threshold", 95, 0, 255));
+    gui.add(minFarThreshold.setup("min far threshold", 0, 0, 255));
+    gui.add(maxFarThreshold.setup("max far threshold", 0, 0, 255));
     
     // Blob values
     gui.add(minBlobArea.setup("min blob area", 2000, 500, 30000));
@@ -75,15 +75,15 @@ void ofApp::setup() {
     // Smoothing values for blobs
     gui.add(smoothingSize.setup("smoothing size", 11, 0, 100));
     gui.add(smoothingShape.setup("smoothing shape", 0, 0, 1));
-    gui.add(blurValue.setup("blur value", 51, 0, 100)); // must be an odd number
-    gui.add(blurThreshold.setup("blur threshold", 177, 0, 255));
+    gui.add(blurValue.setup("blur value", 63, 0, 100)); // must be an odd number
+    gui.add(blurThreshold.setup("blur threshold", 200, 0, 255));
 
     // Position of shape and target FBOs
     // To align silhouettes with bodies
-    gui.add(fboLeft.setup("fbo left", -4970, -5000, -2000));
+    gui.add(fboLeft.setup("fbo left", -5000, -5000, -2000));
     gui.add(fboTop.setup("fbo top", -1310, -2000, 0));
-    gui.add(shapeFboTop.setup("shape fbo top", 286, -400, 1000));
-    gui.add(shapeFboLeft.setup("shape fbo left", 386, -200, 1500));
+    gui.add(shapeFboTop.setup("shape fbo top", 251, -400, 1000));
+    gui.add(shapeFboLeft.setup("shape fbo left", 446, -200, 1500));
     
     // Shoes position - optional
     gui.add(shoesX.setup("shoes x", -1800, -2500, 0));
@@ -92,12 +92,12 @@ void ofApp::setup() {
     gui.add(shoesScale2.setup("shoes scale 2", .22, 0., 1.));
     
     // Text position
-    gui.add(textX.setup("text x", -3830, -2000, -5000)); // Default text
-    gui.add(textX2.setup("text x2", -3815, -2000, -5000)); // Text when inner polygon appears
-    gui.add(textY.setup("text y", -2720, -2000, -4000));
+    gui.add(textX.setup("text x", -3860, -2000, -5000)); // Default text
+    gui.add(textX2.setup("text x2", -3845, -2000, -5000)); // Text when inner polygon appears
+    gui.add(textY.setup("text y", -2550, -2000, -4000));
     
     // Target rectangle bounds
-    gui.add(xOffset.setup("x offset",6,0,20)); // the x value where we should start generating INNER shapes
+    gui.add(xOffset.setup("x offset",5,0,20)); // the x value where we should start generating INNER shapes
     gui.add(yOffset.setup("y offset",3,0,12));
     gui.add(xRange.setup("x range",4,0,20)); // the range of the play area x must be at least 3 (min square size)
     gui.add(yRange.setup("y range",4,0,12));
@@ -676,7 +676,7 @@ void ofApp::draw() {
     ofRotateDeg(180);
     
     // blink
-    ofSetColor(255,255,255,ofMap(lerpedOpacity, 140, 180, 180, 255));
+    ofSetColor(255,255,255,ofMap(lerpedOpacity, 140, 180, 140, 255));
     ofSetColor(255,255,255);
     
     if (triangulationVisible) {
