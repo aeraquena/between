@@ -137,8 +137,8 @@ public:
      *****************/
     
     // Rectangles of target points
-    ofRectangle prevTargetRect;
-    ofRectangle nextTargetRect;
+    ofRectangle prevTargetRect; // fixed target rectangle of previous turn
+    ofRectangle nextTargetRect; // fixed target rectangle of next turn
     float targetLerpPercent = 1.;
     bool firstTime = true;
     
@@ -203,7 +203,7 @@ public:
     int targetRectY;
     int targetRectW;
     int targetRectH;
-    ofRectangle targetRect;
+    ofRectangle targetRect; // animated: lerps between prevTargetRect and nextTargetRect
     
     vector<ofRectangle> boundingBoxes;
     

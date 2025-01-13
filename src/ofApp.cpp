@@ -99,8 +99,9 @@ void ofApp::setup() {
     // Target rectangle bounds
     gui.add(xOffset.setup("x offset",6,0,20)); // the x value where we should start generating INNER shapes
     gui.add(yOffset.setup("y offset",4,0,12));
-    gui.add(xRange.setup("x range",4,0,20)); // the range of the play area x must be at least 3 (min square size)
-    gui.add(yRange.setup("y range",4,0,12));
+    gui.add(xRange.setup("x range",4,2,20)); // the range of the play area x must be at least 3 (min square size)
+    gui.add(yRange.setup("y range",4,2,12));
+    // Range: 2 means 3x3 (outer)
     
     // Grid square size
     gui.add(GRID_SQUARE_SIZE.setup("grid square size",84,40,200));
@@ -1136,16 +1137,30 @@ bool ofApp::blobIsTouchingEdge(ofxCvBlob thisBlob, int roiX, int roiY, int roiW,
 void ofApp::updateTargets() {
     int minTargetSize = 1;
     
-    int nextX = ofRandom(xOffset, xOffset + xRange - minTargetSize);
-    int nextY = ofRandom(yOffset, yOffset + yRange - minTargetSize);
+    int nextX;
+    int nextY;
+    int nextW;
+    int nextH;
     
-    // populate nextTargetRect
+    // Populate nextTargetRect
+    // Check if the targetRect == nextTargetRect. Regenerate until this isn't the case
+    do {
+        nextX = ofRandom(xOffset, xOffset + xRange - minTargetSize);
+        nextY = ofRandom(yOffset, yOffset + yRange - minTargetSize);
+        nextW = floor(ofRandom(1, max(1, xRange - nextX + xOffset)));
+        nextH = floor(ofRandom(1, max(1, yRange - nextY + yOffset)));
+    } while ((xRange > 2 || yRange > 2) && // first check if range is greater than 1x1. If 1x1, it can be the same
+             prevTargetRect.x == nextX &&
+             prevTargetRect.y == nextY &&
+             prevTargetRect.width == nextW &&
+             prevTargetRect.height == nextH);
+    
     nextTargetRect = ofRectangle(nextX,
                                  nextY,
-                                 floor(ofRandom(1, max(1, xRange - nextX + xOffset))),
-                                 floor(ofRandom(1, max(1, yRange - nextY + yOffset))));
-    // if first time, set targetRect to be nextTargetRect
+                                 nextW,
+                                 nextH);
     
+    // if first time, set targetRect to be nextTargetRect (for animation)
     if (firstTime) {
         prevTargetRect = nextTargetRect;
         targetRect.x = nextTargetRect.x;
