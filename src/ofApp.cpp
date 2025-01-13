@@ -488,7 +488,7 @@ void ofApp::draw() {
     ofSetColor(200,200,200);
     ofSetLineWidth(2);
     for (int i = boundsX; i < boundsX+boundsW; i+=GRID_SQUARE_SIZE) { 
-        for (int j = boundsY; j < boundsH; j+=GRID_SQUARE_SIZE) { // TODO: boundsY+boundsH
+        for (int j = boundsY; j < boundsY+boundsH; j+=GRID_SQUARE_SIZE) {
             ofDrawRectangle(i + gridXOffset, j + gridYOffset, GRID_SQUARE_SIZE, GRID_SQUARE_SIZE);
         }
     }
