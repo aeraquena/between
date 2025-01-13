@@ -121,8 +121,8 @@ void ofApp::setup() {
 
     // Projection dimensions
     // TODO: Scale to actual projection dimensions
-    PROJECTION_WIDTH = 1920;
-    PROJECTION_HEIGHT = 1080;
+    PROJECTION_WIDTH = 2880;//1920
+    PROJECTION_HEIGHT = 1620;//1080
 
     finalFbo.allocate(PROJECTION_WIDTH,PROJECTION_HEIGHT);
     targetFbo.allocate(PROJECTION_WIDTH,PROJECTION_HEIGHT);
@@ -487,8 +487,8 @@ void ofApp::draw() {
     ofNoFill();
     ofSetColor(200,200,200);
     ofSetLineWidth(2);
-    for (int i = boundsX; i < min(PROJECTION_WIDTH,boundsW+GRID_SQUARE_SIZE*5); i+=GRID_SQUARE_SIZE) {
-        for (int j = boundsY; j < boundsH; j+=GRID_SQUARE_SIZE) { // min(PROJECTION_HEIGHT,boundsH+GRID_SQUARE_SIZE)
+    for (int i = boundsX; i < boundsX+boundsW; i+=GRID_SQUARE_SIZE) { 
+        for (int j = boundsY; j < boundsH; j+=GRID_SQUARE_SIZE) { // TODO: boundsY+boundsH
             ofDrawRectangle(i + gridXOffset, j + gridYOffset, GRID_SQUARE_SIZE, GRID_SQUARE_SIZE);
         }
     }
