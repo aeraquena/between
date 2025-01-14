@@ -110,6 +110,9 @@ void ofApp::setup() {
     gui.add(gridXOffset.setup("grid x offset", 0, -200, 200));
     gui.add(gridYOffset.setup("grid y offset", 0, 0, 400));
     
+    // Show target rectangle range
+    gui.add(showTargetRange.setup("show target range", false));
+    
     // Hide controls
     bHide = false;
     
@@ -495,6 +498,23 @@ void ofApp::draw() {
     }
     ofPopStyle();
     
+    /*************************************
+     * MARK: Draw target range for setup *
+     *************************************/
+    
+    if (showTargetRange) {
+        ofPushStyle();
+        ofNoFill();
+        ofSetColor(0,255,0);
+        ofSetLineWidth(4);
+        // must start at boundsX, boundsY
+        ofDrawRectangle(boundsX + (xOffset - MIN_TARGET_SIZE) * GRID_SQUARE_SIZE,
+                        boundsY + (yOffset - MIN_TARGET_SIZE) * GRID_SQUARE_SIZE,
+                        (xRange + MIN_TARGET_SIZE) * GRID_SQUARE_SIZE,
+                        (yRange + MIN_TARGET_SIZE) * GRID_SQUARE_SIZE);
+        ofPopStyle();
+    }
+    
     /**************************
      * MARK: Draw silhouettes *
      **************************/
@@ -646,7 +666,6 @@ void ofApp::draw() {
     /********************
      * MARK: Draw shoes *
      ********************/
-    
     
     // Draw shoes
     /*
@@ -1135,18 +1154,17 @@ bool ofApp::blobIsTouchingEdge(ofxCvBlob thisBlob, int roiX, int roiY, int roiW,
 
 //--------------------------------------------------------------
 void ofApp::updateTargets() {
-    int minTargetSize = 1;
-    
     int nextX;
     int nextY;
     int nextW;
     int nextH;
     
+    
     // Populate nextTargetRect
     // Check if the targetRect == nextTargetRect. Regenerate until this isn't the case
     do {
-        nextX = ofRandom(xOffset, xOffset + xRange - minTargetSize);
-        nextY = ofRandom(yOffset, yOffset + yRange - minTargetSize);
+        nextX = ofRandom(xOffset, xOffset + xRange - MIN_TARGET_SIZE);
+        nextY = ofRandom(yOffset, yOffset + yRange - MIN_TARGET_SIZE);
         nextW = floor(ofRandom(1, max(1, xRange - nextX + xOffset)));
         nextH = floor(ofRandom(1, max(1, yRange - nextY + yOffset)));
     } while ((xRange > 2 || yRange > 2) && // first check if range is greater than 1x1. If 1x1, it can be the same

@@ -209,10 +209,13 @@ public:
     
     int BOUNDING_BOX_MARGIN = 8;
     
+    int MIN_TARGET_SIZE = 1;
+    
     ofxIntSlider xOffset;
     ofxIntSlider yOffset;
     ofxIntSlider xRange;
     ofxIntSlider yRange;
     ofxIntSlider GRID_SQUARE_SIZE;
+    ofxToggle showTargetRange;
     
 };
