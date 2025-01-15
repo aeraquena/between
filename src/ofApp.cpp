@@ -92,8 +92,8 @@ void ofApp::setup() {
     gui.add(shoesScale2.setup("shoes scale 2", .22, 0., 1.));
     
     // Text position
-    gui.add(textX.setup("text x", -3814, -3700, -3900)); // Default text
-    gui.add(textX2.setup("text x2", -3789, -3700, -3900)); // Text when inner polygon appears
+    gui.add(textX.setup("text x", -3814, -3700, 3900)); // Default text
+    gui.add(textX2.setup("text x2", -3789, -3700, 3900)); // Text when inner polygon appears
     gui.add(textY.setup("text y", -2270, -2000, -4000));
     
     // Target rectangle bounds
@@ -694,17 +694,29 @@ void ofApp::draw() {
     ofScale(shoesScale);
     //shoes.draw(shoesX + 600,shoesY);
     
-    ofRotateDeg(180);
+    ofRotateDeg(180); // TODO: ROTATE - why do I do this? It's because shoes need to be rotated. But text does not.
     
     // blink
     ofSetColor(255,255,255,ofMap(lerpedOpacity, 140, 180, 180, 255));
     ofSetColor(255,255,255);
     
+    // set the constant strings of our messages
+    // Get widths of both strings, set text position based on width of boundsW
+    string text1 = "KNEEL FACE TO FACE AND TOUCH BOTH HANDS";
+    string text2 = "NOW FIT THE POLYGON INTO THE GRAY AREA";
+    float text1Width = franklinBook.stringWidth(text1);
+    float text2Width = franklinBook.stringWidth(text2);
+    
+    //std::cout << "text 1 width: " << text1Width << endl; // 2885
+    //std::cout << "text 2 width: " << text2Width << endl; // 2723
+    //std::cout << "draw text at: " << (boundsW - text2Width) / 2;
+    
     if (triangulationVisible) {
-        franklinBook.drawString("NOW FIT THE POLYGON INTO THE GRAY AREA", textX2, textY);
+        franklinBook.drawString(text2, textX2, textY); // (boundsW - text2Width) / 2
     } else {
-        franklinBook.drawString("KNEEL FACE TO FACE AND TOUCH BOTH HANDS", textX-50, textY);
+        franklinBook.drawString(text1, textX, textY); // (boundsW - text1Width) / 2
     }
+
     ofPopMatrix();
     
     finalFbo.end();
@@ -742,7 +754,7 @@ void ofApp::draw() {
 
     // first param is length of each dash
     glLineStipple (20, 0xAAAA);
-    glLineWidth(10); // this doesn't seem to do anything
+    //glLineWidth(1); // this doesn't do anything - not supported
     
     if (targetLerpPercent < 1.) {
         // If transition is in progress,
@@ -1058,9 +1070,9 @@ void ofApp::draw() {
     // Draw shapes
     // Turn around 180
     
-    ofRotateDeg(180); // TODO: Do this if Kinect is upside down
+    ofRotateDeg(180); // TODO: Do this if Kinect is upside down. ROTATE: Why do I do this?
     // we need to rotate it in place
-    finalFbo.draw(SCREEN_WIDTH + fboLeft, fboTop);
+    finalFbo.draw(SCREEN_WIDTH + fboLeft, fboTop); // TODO: Remove SCREEN_WIDTH if single screen mode
     
     
     // Draw targets
