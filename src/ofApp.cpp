@@ -43,9 +43,6 @@ void ofApp::setup() {
     
     gui.setup();
     
-    // Scale value of projection resolution to Kinect resolution
-    scaleVal = 2; //2
-    
     // Set Kinect depth detection thresholds
     // this should be wider than86the play area
     gui.add(roiX.setup("roi x", 19, 0, 640));
@@ -62,8 +59,8 @@ void ofApp::setup() {
     gui.add(boundsH.setup("bounds h", 924, 220, 1280));
     
     // Depth thresholds
-    gui.add(minNearThreshold.setup("min near threshold", 110, 0, 255));
-    gui.add(maxNearThreshold.setup("max near threshold", 110, 0, 255));
+    gui.add(minNearThreshold.setup("min near threshold", 182, 0, 255));
+    gui.add(maxNearThreshold.setup("max near threshold", 182, 0, 255));
     gui.add(minFarThreshold.setup("min far threshold", 0, 0, 255));
     gui.add(maxFarThreshold.setup("max far threshold", 0, 0, 255));
     
@@ -84,6 +81,7 @@ void ofApp::setup() {
     gui.add(fboTop.setup("fbo top", -1090, -2000, 0));
     gui.add(shapeFboTop.setup("shape fbo top", 187, -400, 1000));
     gui.add(shapeFboLeft.setup("shape fbo left", 488, -200, 1500));
+    gui.add(scaleVal.setup("shape scale val", 2.0, 1.0, 3.0));
     
     // Shoes position - optional
     gui.add(shoesX.setup("shoes x", -1800, -2500, 0));
@@ -567,8 +565,8 @@ void ofApp::draw() {
             
             ofBeginShape();
             for( int i = 0; i < cur.getVertices().size(); i++) {
-                ofVertex(min(PROJECTION_WIDTH, (int) cur.getVertices().at(i).x * scaleVal + shapeFboLeft),
-                         min(PROJECTION_HEIGHT, (int) cur.getVertices().at(i).y * scaleVal + shapeFboTop));
+                ofVertex(min(PROJECTION_WIDTH, (int) (cur.getVertices().at(i).x * scaleVal + shapeFboLeft)),
+                         min(PROJECTION_HEIGHT, (int) (cur.getVertices().at(i).y * scaleVal + shapeFboTop)));
             }
             ofEndShape(true);
             

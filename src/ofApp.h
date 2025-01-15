@@ -54,9 +54,6 @@ public:
     int SCREEN_WIDTH = 1440; // 1280
     int SCREEN_HEIGHT = 900; // 800
     
-    // Scale value of projection resolution to Kinect resolution
-    int scaleVal;
-    
     /****************
      * MARK: Kinect *
      ****************/
@@ -118,6 +115,9 @@ public:
     // Additional position of shape FBO
     ofxIntSlider shapeFboTop;
     ofxIntSlider shapeFboLeft;
+    
+    // Scale value of projection resolution to Kinect resolution
+    ofxFloatSlider scaleVal;
     
     /******************
      * MARK: Graphics *
