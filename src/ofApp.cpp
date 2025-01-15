@@ -1049,12 +1049,14 @@ void ofApp::draw() {
     }
 
     // Draw ROI on 1st screen
-    ofPushStyle();
-    ofNoFill();
-    ofSetColor(0,255,0);
-    ofDrawRectangle(roiX, roiY, roiW, roiH);
-    ofPopStyle();
-    
+    if (videoMode != 0) {
+        ofPushStyle();
+        ofNoFill();
+        ofSetColor(0,255,0);
+        ofDrawRectangle(roiX, roiY, roiW, roiH);
+        ofPopStyle();
+    }
+
     ofPopMatrix();
     
     /*************************
