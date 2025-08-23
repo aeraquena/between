@@ -59,8 +59,8 @@ void ofApp::setup() {
     gui.add(boundsH.setup("bounds h", 924, 220, 1280));
     
     // Depth thresholds
-    gui.add(minNearThreshold.setup("min near threshold", 182, 0, 255));
-    gui.add(maxNearThreshold.setup("max near threshold", 182, 0, 255));
+    gui.add(minNearThreshold.setup("min near threshold", 140, 0, 255));
+    gui.add(maxNearThreshold.setup("max near threshold", 156, 0, 255));
     gui.add(minFarThreshold.setup("min far threshold", 0, 0, 255));
     gui.add(maxFarThreshold.setup("max far threshold", 0, 0, 255));
     
@@ -72,15 +72,15 @@ void ofApp::setup() {
     // Smoothing values for blobs
     gui.add(smoothingSize.setup("smoothing size", 11, 0, 100));
     gui.add(smoothingShape.setup("smoothing shape", 0, 0, 1));
-    gui.add(blurValue.setup("blur value", 61, 0, 100)); // must be an odd number
-    gui.add(blurThreshold.setup("blur threshold", 177, 0, 255));
+    gui.add(blurValue.setup("blur value", 65, 0, 100)); // must be an odd number
+    gui.add(blurThreshold.setup("blur threshold", 183, 0, 255));
 
     // Position of shape and target FBOs
     // To align silhouettes with bodies
     gui.add(fboLeft.setup("fbo left", -4970, -5000, -2000));
     gui.add(fboTop.setup("fbo top", -1090, -2000, 0));
-    gui.add(shapeFboTop.setup("shape fbo top", 187, -400, 1000));
-    gui.add(shapeFboLeft.setup("shape fbo left", 488, -200, 1500));
+    gui.add(shapeFboTop.setup("shape fbo top", 12, -400, 1000));
+    gui.add(shapeFboLeft.setup("shape fbo left", 420, -200, 1500));
     gui.add(scaleVal.setup("shape scale val", 2.0, 1.0, 3.0));
     
     // Shoes position - optional
@@ -95,10 +95,10 @@ void ofApp::setup() {
     gui.add(textY.setup("text y", -2270, -2000, -4000));
     
     // Target rectangle bounds
-    gui.add(xOffset.setup("x offset",6,0,20)); // the x value where we should start generating INNER shapes
-    gui.add(yOffset.setup("y offset",4,0,12));
-    gui.add(xRange.setup("x range",4,2,20)); // the range of the play area x must be at least 3 (min square size)
-    gui.add(yRange.setup("y range",4,2,12));
+    gui.add(xOffset.setup("x offset",5,0,20)); // the x value where we should start generating INNER shapes
+    gui.add(yOffset.setup("y offset",2,0,12));
+    gui.add(xRange.setup("x range",6,2,20)); // the range of the play area x must be at least 3 (min square size)
+    gui.add(yRange.setup("y range",6,2,12));
     // Range: 2 means 3x3 (outer)
     
     // Grid square size
@@ -692,7 +692,7 @@ void ofApp::draw() {
     ofScale(shoesScale);
     //shoes.draw(shoesX + 600,shoesY);
     
-    ofRotateDeg(180); // TODO: ROTATE - why do I do this? It's because shoes need to be rotated. But text does not.
+    ofRotateDeg(180); // TODO: ROTATE - why do I do this? It's because shoes need to be rotated. But text does not.f
     
     // blink
     ofSetColor(255,255,255,ofMap(lerpedOpacity, 140, 180, 180, 255));
@@ -1054,6 +1054,16 @@ void ofApp::draw() {
         ofDrawRectangle(roiX, roiY, roiW, roiH);
         ofPopStyle();
     }
+    
+    /*************************
+     * MARK: Draw debug text *
+     *************************/
+    
+    stringstream reportStream;
+    
+    reportStream << "Num blobs: " << contourFinder.nBlobs << endl;
+
+    ofDrawBitmapString(reportStream.str(), 220, 550);
 
     ofPopMatrix();
     
