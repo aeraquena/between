@@ -54,9 +54,6 @@ public:
     int SCREEN_WIDTH = 1440; // 1280
     int SCREEN_HEIGHT = 900; // 800
     
-    // Scale value of projection resolution to Kinect resolution
-    int scaleVal;
-    
     /****************
      * MARK: Kinect *
      ****************/
@@ -119,6 +116,9 @@ public:
     ofxIntSlider shapeFboTop;
     ofxIntSlider shapeFboLeft;
     
+    // Scale value of projection resolution to Kinect resolution
+    ofxFloatSlider scaleVal;
+    
     /******************
      * MARK: Graphics *
      ******************/
@@ -137,8 +137,8 @@ public:
      *****************/
     
     // Rectangles of target points
-    ofRectangle prevTargetRect;
-    ofRectangle nextTargetRect;
+    ofRectangle prevTargetRect; // fixed target rectangle of previous turn
+    ofRectangle nextTargetRect; // fixed target rectangle of next turn
     float targetLerpPercent = 1.;
     bool firstTime = true;
     
@@ -203,16 +203,19 @@ public:
     int targetRectY;
     int targetRectW;
     int targetRectH;
-    ofRectangle targetRect;
+    ofRectangle targetRect; // animated: lerps between prevTargetRect and nextTargetRect
     
     vector<ofRectangle> boundingBoxes;
     
     int BOUNDING_BOX_MARGIN = 8;
+    
+    int MIN_TARGET_SIZE = 1;
     
     ofxIntSlider xOffset;
     ofxIntSlider yOffset;
     ofxIntSlider xRange;
     ofxIntSlider yRange;
     ofxIntSlider GRID_SQUARE_SIZE;
+    ofxToggle showTargetRange;
     
 };

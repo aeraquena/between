@@ -43,29 +43,26 @@ void ofApp::setup() {
     
     gui.setup();
     
-    // Scale value of projection resolution to Kinect resolution
-    scaleVal = 2; //2
-    
     // Set Kinect depth detection thresholds
     // this should be wider than86the play area
-    gui.add(roiX.setup("roi x", 22, 0, 640));
+    gui.add(roiX.setup("roi x", 19, 0, 640));
     gui.add(roiY.setup("roi y", 43, 0, 480));
-    gui.add(roiW.setup("roi w", 518, 0, 640));
-    gui.add(roiH.setup("roi h", 400, 0, 480));
+    gui.add(roiW.setup("roi w", 582, 0, 640));
+    gui.add(roiH.setup("roi h", 396, 0, 480));
     
     // Bounds parameters
-    gui.add(boundsX.setup("bounds x", 237, 0, 500));
-    gui.add(boundsY.setup("bounds y", 265, 0, 500));
-    gui.add(boundsW.setup("bounds w", 1600, 400, 2000));
+    gui.add(boundsX.setup("bounds x", 432, 0, 500));
+    gui.add(boundsY.setup("bounds y", 60, 0, 500));
+    gui.add(boundsW.setup("bounds w", 1260, 1200, 1300));
     gui.add(leftBoundsDiff.setup("right bounds diff", 0, -170, 0)); // inverted intentionally
     gui.add(rightBoundsDiff.setup("left bounds diff", 0, -104, 0));
-    gui.add(boundsH.setup("bounds h", 900, 220, 1280));
+    gui.add(boundsH.setup("bounds h", 924, 220, 1280));
     
     // Depth thresholds
-    gui.add(minNearThreshold.setup("min near threshold", 98, 0, 255));
-    gui.add(maxNearThreshold.setup("max near threshold", 113, 0, 255));
-    gui.add(minFarThreshold.setup("min far threshold", 57, 0, 255));
-    gui.add(maxFarThreshold.setup("max far threshold", 98, 0, 255));
+    gui.add(minNearThreshold.setup("min near threshold", 182, 0, 255));
+    gui.add(maxNearThreshold.setup("max near threshold", 182, 0, 255));
+    gui.add(minFarThreshold.setup("min far threshold", 0, 0, 255));
+    gui.add(maxFarThreshold.setup("max far threshold", 0, 0, 255));
     
     // Blob values
     gui.add(minBlobArea.setup("min blob area", 2000, 500, 30000));
@@ -75,15 +72,16 @@ void ofApp::setup() {
     // Smoothing values for blobs
     gui.add(smoothingSize.setup("smoothing size", 11, 0, 100));
     gui.add(smoothingShape.setup("smoothing shape", 0, 0, 1));
-    gui.add(blurValue.setup("blur value", 51, 0, 100)); // must be an odd number
+    gui.add(blurValue.setup("blur value", 61, 0, 100)); // must be an odd number
     gui.add(blurThreshold.setup("blur threshold", 177, 0, 255));
 
     // Position of shape and target FBOs
     // To align silhouettes with bodies
     gui.add(fboLeft.setup("fbo left", -4970, -5000, -2000));
-    gui.add(fboTop.setup("fbo top", -1310, -2000, 0));
-    gui.add(shapeFboTop.setup("shape fbo top", 286, -400, 1000));
-    gui.add(shapeFboLeft.setup("shape fbo left", 386, -200, 1500));
+    gui.add(fboTop.setup("fbo top", -1090, -2000, 0));
+    gui.add(shapeFboTop.setup("shape fbo top", 187, -400, 1000));
+    gui.add(shapeFboLeft.setup("shape fbo left", 488, -200, 1500));
+    gui.add(scaleVal.setup("shape scale val", 2.0, 1.0, 3.0));
     
     // Shoes position - optional
     gui.add(shoesX.setup("shoes x", -1800, -2500, 0));
@@ -92,22 +90,26 @@ void ofApp::setup() {
     gui.add(shoesScale2.setup("shoes scale 2", .22, 0., 1.));
     
     // Text position
-    gui.add(textX.setup("text x", -3830, -2000, -5000)); // Default text
-    gui.add(textX2.setup("text x2", -3815, -2000, -5000)); // Text when inner polygon appears
-    gui.add(textY.setup("text y", -2720, -2000, -4000));
+    gui.add(textX.setup("text x", -3814, -3700, 3900)); // Default text
+    gui.add(textX2.setup("text x2", -3789, -3700, 3900)); // Text when inner polygon appears
+    gui.add(textY.setup("text y", -2270, -2000, -4000));
     
     // Target rectangle bounds
     gui.add(xOffset.setup("x offset",6,0,20)); // the x value where we should start generating INNER shapes
-    gui.add(yOffset.setup("y offset",3,0,12));
-    gui.add(xRange.setup("x range",4,0,20)); // the range of the play area x must be at least 3 (min square size)
-    gui.add(yRange.setup("y range",4,0,12));
+    gui.add(yOffset.setup("y offset",4,0,12));
+    gui.add(xRange.setup("x range",4,2,20)); // the range of the play area x must be at least 3 (min square size)
+    gui.add(yRange.setup("y range",4,2,12));
+    // Range: 2 means 3x3 (outer)
     
     // Grid square size
-    gui.add(GRID_SQUARE_SIZE.setup("grid square size",100,40,200));
+    gui.add(GRID_SQUARE_SIZE.setup("grid square size",84,40,200));
     
     // Grid offset
-    gui.add(gridXOffset.setup("grid x offset", 35, -200, 200));
+    gui.add(gridXOffset.setup("grid x offset", 0, -200, 200));
     gui.add(gridYOffset.setup("grid y offset", 0, 0, 400));
+    
+    // Show target rectangle range
+    gui.add(showTargetRange.setup("show target range", false));
     
     // Hide controls
     bHide = false;
@@ -121,8 +123,8 @@ void ofApp::setup() {
 
     // Projection dimensions
     // TODO: Scale to actual projection dimensions
-    PROJECTION_WIDTH = 2880;
-    PROJECTION_HEIGHT = 1800;
+    PROJECTION_WIDTH = 2880;//1920
+    PROJECTION_HEIGHT = 1620;//1080
 
     finalFbo.allocate(PROJECTION_WIDTH,PROJECTION_HEIGHT);
     targetFbo.allocate(PROJECTION_WIDTH,PROJECTION_HEIGHT);
@@ -156,7 +158,7 @@ void ofApp::setup() {
     // Font
     ofTrueTypeFont::setGlobalDpi(72);
     
-    franklinBook.load("frabk.ttf", 150);
+    franklinBook.load("frabk.ttf", 142);
     franklinBook.setLineHeight(18.0f);
     franklinBook.setLetterSpacing(1.037);
     
@@ -423,23 +425,24 @@ void ofApp::draw() {
     
     // Fade target rectangle in and out when no one is playing
     // Get lerped opacity (scale)
+    // TODO: Set a variable for lerped opacity range, rather than constants
     int frameNum = ofGetFrameNum() % 120;
-    int lerpedOpacity = 170;
+    int lerpedOpacity = 190;
     if (contourFinder.nBlobs == 0) {
         if (frameNum < 60) {
             lerpedOpacity =
             ofMap(frameNum,
                     0,
                     60,
-                    170,
-                    210,
+                    190,
+                    230,
                     true);
         } else {
             lerpedOpacity = ofMap(frameNum,
                     60,
                     120,
-                    210,
-                    170,
+                    230,
+                    190,
                     true);
         }
     }
@@ -484,14 +487,31 @@ void ofApp::draw() {
     
     ofPushStyle();
     ofNoFill();
-    ofSetColor(255,255,255);
-    ofSetLineWidth(1);
-    for (int i = boundsX; i < min(PROJECTION_WIDTH,boundsW+GRID_SQUARE_SIZE*2); i+=GRID_SQUARE_SIZE) {
-        for (int j = boundsY; j < min(PROJECTION_HEIGHT,boundsH+GRID_SQUARE_SIZE*2); j+=GRID_SQUARE_SIZE) {
+    ofSetColor(200,200,200);
+    ofSetLineWidth(2);
+    for (int i = boundsX; i < boundsX+boundsW; i+=GRID_SQUARE_SIZE) { 
+        for (int j = boundsY; j < boundsY+boundsH; j+=GRID_SQUARE_SIZE) {
             ofDrawRectangle(i + gridXOffset, j + gridYOffset, GRID_SQUARE_SIZE, GRID_SQUARE_SIZE);
         }
     }
     ofPopStyle();
+    
+    /*************************************
+     * MARK: Draw target range for setup *
+     *************************************/
+    
+    if (showTargetRange) {
+        ofPushStyle();
+        ofNoFill();
+        ofSetColor(0,255,0);
+        ofSetLineWidth(4);
+        // must start at boundsX, boundsY
+        ofDrawRectangle(boundsX + (xOffset - MIN_TARGET_SIZE) * GRID_SQUARE_SIZE,
+                        boundsY + (yOffset - MIN_TARGET_SIZE) * GRID_SQUARE_SIZE,
+                        (xRange + MIN_TARGET_SIZE) * GRID_SQUARE_SIZE,
+                        (yRange + MIN_TARGET_SIZE) * GRID_SQUARE_SIZE);
+        ofPopStyle();
+    }
     
     /**************************
      * MARK: Draw silhouettes *
@@ -545,8 +565,8 @@ void ofApp::draw() {
             
             ofBeginShape();
             for( int i = 0; i < cur.getVertices().size(); i++) {
-                ofVertex(min(PROJECTION_WIDTH, (int) cur.getVertices().at(i).x * scaleVal + shapeFboLeft),
-                         min(PROJECTION_HEIGHT, (int) cur.getVertices().at(i).y * scaleVal + shapeFboTop));
+                ofVertex(min(PROJECTION_WIDTH, (int) (cur.getVertices().at(i).x * scaleVal + shapeFboLeft)),
+                         min(PROJECTION_HEIGHT, (int) (cur.getVertices().at(i).y * scaleVal + shapeFboTop)));
             }
             ofEndShape(true);
             
@@ -645,7 +665,6 @@ void ofApp::draw() {
      * MARK: Draw shoes *
      ********************/
     
-    
     // Draw shoes
     /*
     ofSetColor(255,255,255,255);
@@ -673,17 +692,29 @@ void ofApp::draw() {
     ofScale(shoesScale);
     //shoes.draw(shoesX + 600,shoesY);
     
-    ofRotateDeg(180);
+    ofRotateDeg(180); // TODO: ROTATE - why do I do this? It's because shoes need to be rotated. But text does not.
     
     // blink
     ofSetColor(255,255,255,ofMap(lerpedOpacity, 140, 180, 180, 255));
     ofSetColor(255,255,255);
     
+    // set the constant strings of our messages
+    // Get widths of both strings, set text position based on width of boundsW
+    string text1 = "KNEEL FACE TO FACE AND TOUCH BOTH HANDS";
+    string text2 = "NOW FIT THE POLYGON INTO THE GRAY AREA";
+    float text1Width = franklinBook.stringWidth(text1);
+    float text2Width = franklinBook.stringWidth(text2);
+    
+    //std::cout << "text 1 width: " << text1Width << endl; // 2885
+    //std::cout << "text 2 width: " << text2Width << endl; // 2723
+    //std::cout << "draw text at: " << (boundsW - text2Width) / 2;
+    
     if (triangulationVisible) {
-        franklinBook.drawString("NOW FIT THE POLYGON INTO THE GRAY AREA", textX2, textY);
+        franklinBook.drawString(text2, textX2, textY); // (boundsW - text2Width) / 2
     } else {
-        franklinBook.drawString("KNEEL FACE TO FACE AND TOUCH BOTH HANDS", textX-50, textY);
+        franklinBook.drawString(text1, textX, textY); // (boundsW - text1Width) / 2
     }
+
     ofPopMatrix();
     
     finalFbo.end();
@@ -721,7 +752,7 @@ void ofApp::draw() {
 
     // first param is length of each dash
     glLineStipple (20, 0xAAAA);
-    glLineWidth(10);
+    //glLineWidth(1); // this doesn't do anything - not supported
     
     if (targetLerpPercent < 1.) {
         // If transition is in progress,
@@ -770,7 +801,7 @@ void ofApp::draw() {
         
         // Inner rect
         
-        ofSetLineWidth(4);
+        ofSetLineWidth(4); // this doesn't seem to do anything either
         ofSetColor(255,255,255,255);
         ofNoFill();
         
@@ -1016,12 +1047,14 @@ void ofApp::draw() {
     }
 
     // Draw ROI on 1st screen
-    ofPushStyle();
-    ofNoFill();
-    ofSetColor(0,255,0);
-    ofDrawRectangle(roiX, roiY, roiW, roiH);
-    ofPopStyle();
-    
+    if (videoMode != 0) {
+        ofPushStyle();
+        ofNoFill();
+        ofSetColor(0,255,0);
+        ofDrawRectangle(roiX, roiY, roiW, roiH);
+        ofPopStyle();
+    }
+
     ofPopMatrix();
     
     /*************************
@@ -1037,13 +1070,13 @@ void ofApp::draw() {
     // Draw shapes
     // Turn around 180
     
-    ofRotateDeg(180);
+    ofRotateDeg(180); // TODO: Do this if Kinect is upside down. ROTATE: Why do I do this?
     // we need to rotate it in place
-    finalFbo.draw(SCREEN_WIDTH + fboLeft, fboTop);
+    finalFbo.draw(SCREEN_WIDTH + fboLeft, fboTop); // TODO: Remove SCREEN_WIDTH if single screen mode
     
     
     // Draw targets
-    targetFbo.draw(SCREEN_WIDTH + fboLeft + 35, fboTop);
+    targetFbo.draw(SCREEN_WIDTH + fboLeft, fboTop); // first one: + GRID_X_OFFSET
     ofPopMatrix();
     
     // Draw GUI
@@ -1133,18 +1166,31 @@ bool ofApp::blobIsTouchingEdge(ofxCvBlob thisBlob, int roiX, int roiY, int roiW,
 
 //--------------------------------------------------------------
 void ofApp::updateTargets() {
-    int minTargetSize = 1;
+    int nextX;
+    int nextY;
+    int nextW;
+    int nextH;
     
-    int nextX = ofRandom(xOffset, xOffset + xRange - minTargetSize);
-    int nextY = ofRandom(yOffset, yOffset + yRange - minTargetSize);
     
-    // populate nextTargetRect
+    // Populate nextTargetRect
+    // Check if the targetRect == nextTargetRect. Regenerate until this isn't the case
+    do {
+        nextX = ofRandom(xOffset, xOffset + xRange - MIN_TARGET_SIZE);
+        nextY = ofRandom(yOffset, yOffset + yRange - MIN_TARGET_SIZE);
+        nextW = floor(ofRandom(1, max(1, xRange - nextX + xOffset)));
+        nextH = floor(ofRandom(1, max(1, yRange - nextY + yOffset)));
+    } while ((xRange > 2 || yRange > 2) && // first check if range is greater than 1x1. If 1x1, it can be the same
+             prevTargetRect.x == nextX &&
+             prevTargetRect.y == nextY &&
+             prevTargetRect.width == nextW &&
+             prevTargetRect.height == nextH);
+    
     nextTargetRect = ofRectangle(nextX,
                                  nextY,
-                                 floor(ofRandom(1, max(1, xRange - nextX + xOffset))),
-                                 floor(ofRandom(1, max(1, yRange - nextY + yOffset))));
-    // if first time, set targetRect to be nextTargetRect
+                                 nextW,
+                                 nextH);
     
+    // if first time, set targetRect to be nextTargetRect (for animation)
     if (firstTime) {
         prevTargetRect = nextTargetRect;
         targetRect.x = nextTargetRect.x;
