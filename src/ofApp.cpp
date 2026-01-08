@@ -1076,12 +1076,23 @@ void ofApp::draw() {
     // Turn around 180
     
     ofRotateDeg(180); // TODO: Do this if Kinect is upside down. ROTATE: Why do I do this?
-    // we need to rotate it in place
-    finalFbo.draw(SCREEN_WIDTH + fboLeft, fboTop); // TODO: Remove SCREEN_WIDTH if single screen mode
     
+    // To rotate 180 degrees in place:
+    
+    /*ofPushMatrix();
+    ofTranslate(SCREEN_WIDTH + fboLeft/2, fboTop/2);
+    ofRotateDeg(180);
+    finalFbo.draw(0,0); // TODO: Remove SCREEN_WIDTH if single screen mode
     
     // Draw targets
-    targetFbo.draw(SCREEN_WIDTH + fboLeft, fboTop); // first one: + GRID_X_OFFSET
+    targetFbo.draw(0,0); // first one: + GRID_X_OFFSET
+    ofPopMatrix();*/
+    
+    // To rotate 0 degrees:
+    
+    finalFbo.draw(SCREEN_WIDTH + fboLeft, fboTop);
+    targetFbo.draw(SCREEN_WIDTH + fboLeft, fboTop);
+    
     ofPopMatrix();
     
     // Draw GUI
