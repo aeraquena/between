@@ -14,6 +14,6 @@ int main() {
     ofRunApp(new ofApp);
     
     // Windowed
-    //ofSetupOpenGL(2560, 1024, OF_WINDOW);
-    //ofRunApp(new ofApp());
+    /*ofSetupOpenGL(2560, 1024, OF_WINDOW);
+    ofRunApp(new ofApp());*/
 }
