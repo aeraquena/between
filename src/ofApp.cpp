@@ -45,22 +45,22 @@ void ofApp::setup() {
     
     // Set Kinect depth detection thresholds
     // this should be wider than the play area
-    gui.add(roiX.setup("roi x", 96, 0, 640));
-    gui.add(roiY.setup("roi y", 38, 0, 480));
-    gui.add(roiW.setup("roi w", 412, 0, 640));
-    gui.add(roiH.setup("roi h", 384, 0, 480));
+    gui.add(roiX.setup("roi x", 70, 0, 640));
+    gui.add(roiY.setup("roi y", 36, 0, 480));
+    gui.add(roiW.setup("roi w", 480, 0, 640));
+    gui.add(roiH.setup("roi h", 386, 0, 480));
     
     // Bounds parameters
     gui.add(boundsX.setup("bounds x", 252, 0, 500));
-    gui.add(boundsY.setup("bounds y", 67, 0, 500));
+    gui.add(boundsY.setup("bounds y", 72, 0, 500));
     gui.add(boundsW.setup("bounds w", 1130, 1000, 1300));
     gui.add(leftBoundsDiff.setup("right bounds diff", 0, -170, 0)); // inverted intentionally
     gui.add(rightBoundsDiff.setup("left bounds diff", 0, -104, 0));
     gui.add(boundsH.setup("bounds h", 956, 220, 1280));
     
     // Depth thresholds
-    gui.add(minNearThreshold.setup("min near threshold", 86, 0, 255));
-    gui.add(maxNearThreshold.setup("max near threshold", 110, 0, 255));
+    gui.add(minNearThreshold.setup("min near threshold", 89, 0, 255));
+    gui.add(maxNearThreshold.setup("max near threshold", 94, 0, 255));
     gui.add(minFarThreshold.setup("min far threshold", 0, 0, 255));
     gui.add(maxFarThreshold.setup("max far threshold", 0, 0, 255));
     
@@ -80,7 +80,7 @@ void ofApp::setup() {
     gui.add(fboLeft.setup("fbo left", -4970, -5000, -2000));
     gui.add(fboTop.setup("fbo top", -1090, -2000, 0));
     gui.add(shapeFboTop.setup("shape fbo top", -21, -400, 1000));
-    gui.add(shapeFboLeft.setup("shape fbo left", 250, -200, 1500));
+    gui.add(shapeFboLeft.setup("shape fbo left", 207, -200, 1500));
     gui.add(scaleVal.setup("shape scale val", 2.7, 1.0, 3.0));
     
     // Shoes position - optional
