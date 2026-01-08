@@ -7,13 +7,13 @@ int main() {
     //ofRunApp(new ofApp());
     
     // Fullscreen spans multiple windows
-    /*ofGLFWWindowSettings settings;
+    ofGLFWWindowSettings settings;
     settings.multiMonitorFullScreen = true;
     settings.windowMode = OF_FULLSCREEN;
     ofCreateWindow(settings);
-    ofRunApp(new ofApp);*/
+    ofRunApp(new ofApp);
     
     // Windowed
-    ofSetupOpenGL(2560, 1024, OF_WINDOW);
-    ofRunApp(new ofApp());
+    /*ofSetupOpenGL(2560, 1024, OF_WINDOW);
+    ofRunApp(new ofApp());*/
 }

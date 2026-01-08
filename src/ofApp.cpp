@@ -45,22 +45,22 @@ void ofApp::setup() {
     
     // Set Kinect depth detection thresholds
     // this should be wider than the play area
-    gui.add(roiX.setup("roi x", 19, 0, 640));
+    gui.add(roiX.setup("roi x", 96, 0, 640));
     gui.add(roiY.setup("roi y", 38, 0, 480));
-    gui.add(roiW.setup("roi w", 579, 0, 640));
+    gui.add(roiW.setup("roi w", 412, 0, 640));
     gui.add(roiH.setup("roi h", 384, 0, 480));
     
     // Bounds parameters
-    gui.add(boundsX.setup("bounds x", 195, 0, 500));
-    gui.add(boundsY.setup("bounds y", 150, 0, 500));
-    gui.add(boundsW.setup("bounds w", 1259, 1200, 1300));
+    gui.add(boundsX.setup("bounds x", 252, 0, 500));
+    gui.add(boundsY.setup("bounds y", 67, 0, 500));
+    gui.add(boundsW.setup("bounds w", 1130, 1000, 1300));
     gui.add(leftBoundsDiff.setup("right bounds diff", 0, -170, 0)); // inverted intentionally
     gui.add(rightBoundsDiff.setup("left bounds diff", 0, -104, 0));
-    gui.add(boundsH.setup("bounds h", 750, 220, 1280));
+    gui.add(boundsH.setup("bounds h", 956, 220, 1280));
     
     // Depth thresholds
     gui.add(minNearThreshold.setup("min near threshold", 86, 0, 255));
-    gui.add(maxNearThreshold.setup("max near threshold", 118, 0, 255));
+    gui.add(maxNearThreshold.setup("max near threshold", 110, 0, 255));
     gui.add(minFarThreshold.setup("min far threshold", 0, 0, 255));
     gui.add(maxFarThreshold.setup("max far threshold", 0, 0, 255));
     
@@ -72,16 +72,16 @@ void ofApp::setup() {
     // Smoothing values for blobs
     gui.add(smoothingSize.setup("smoothing size", 11, 0, 100));
     gui.add(smoothingShape.setup("smoothing shape", 0, 0, 1));
-    gui.add(blurValue.setup("blur value", 61, 0, 100)); // must be an odd number
+    gui.add(blurValue.setup("blur value", 31, 0, 100)); // must be an odd number
     gui.add(blurThreshold.setup("blur threshold", 188, 0, 255));
 
     // Position of shape and target FBOs
     // To align silhouettes with bodies
     gui.add(fboLeft.setup("fbo left", -4970, -5000, -2000));
     gui.add(fboTop.setup("fbo top", -1090, -2000, 0));
-    gui.add(shapeFboTop.setup("shape fbo top", 47, -400, 1000));
-    gui.add(shapeFboLeft.setup("shape fbo left", 140, -200, 1500));
-    gui.add(scaleVal.setup("shape scale val", 3, 1.0, 3.0));
+    gui.add(shapeFboTop.setup("shape fbo top", -21, -400, 1000));
+    gui.add(shapeFboLeft.setup("shape fbo left", 250, -200, 1500));
+    gui.add(scaleVal.setup("shape scale val", 2.7, 1.0, 3.0));
     
     // Shoes position - optional
     gui.add(shoesX.setup("shoes x", -1800, -2500, 0));
@@ -90,19 +90,22 @@ void ofApp::setup() {
     gui.add(shoesScale2.setup("shoes scale 2", .22, 0., 1.));
     
     // Text position
-    gui.add(textX.setup("text x", 327, -3700, 3900)); // Default text
-    gui.add(textX2.setup("text x2", 413, 200, 400)); // Text when inner polygon appears
-    gui.add(textY.setup("text y", 279, -2000, 2000));
+    gui.add(textX.setup("text x", 557, 500, 600)); // Default text
+    gui.add(textX2.setup("text x2", 617, 600, 700)); // Text when inner polygon appears
+    gui.add(textY.setup("text y", 119, -2000, 2000));
+    
+    gui.add(textX3.setup("text x3", 2110, 1000, 3000));
+    gui.add(textY2.setup("text y2", 2465, 2000, 3000));
     
     // Target rectangle bounds
-    gui.add(xOffset.setup("x offset",6,0,20)); // the x value where we should start generating INNER shapes
+    gui.add(xOffset.setup("x offset",5,0,20)); // the x value where we should start generating INNER shapes
     gui.add(yOffset.setup("y offset",3,0,12));
     gui.add(xRange.setup("x range",4,2,20)); // the range of the play area x must be at least 3 (min square size)
-    gui.add(yRange.setup("y range",4,2,12));
+    gui.add(yRange.setup("y range",5,2,12));
     // Range: 2 means 3x3 (outer)
     
     // Grid square size
-    gui.add(GRID_SQUARE_SIZE.setup("grid square size",84,40,200));
+    gui.add(GRID_SQUARE_SIZE.setup("grid square size",87,40,200));
     
     // Grid offset
     gui.add(gridXOffset.setup("grid x offset", 0, -200, 200));
@@ -158,7 +161,7 @@ void ofApp::setup() {
     // Font
     ofTrueTypeFont::setGlobalDpi(72);
     
-    franklinBook.load("frabk.ttf", 142);
+    franklinBook.load("frabk.ttf", 128); // 142
     franklinBook.setLineHeight(18.0f);
     franklinBook.setLetterSpacing(1.037);
     
@@ -717,8 +720,8 @@ void ofApp::draw() {
     
     string text3 = "BETWEEN";
     string text4 = "BY CLAIRE KWONG";
-    franklinBook.drawString(text3, textX, textY + PROJECTION_HEIGHT + 300);
-    franklinBook.drawString(text4, textX + 1700, textY + PROJECTION_HEIGHT + 200);
+    franklinBook.drawString(text3, textX, textY2);
+    franklinBook.drawString(text4, textX3, textY2);
 
     ofPopMatrix();
     

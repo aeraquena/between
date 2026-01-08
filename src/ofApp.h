@@ -196,7 +196,9 @@ public:
 
     ofxIntSlider textX;
     ofxIntSlider textX2;
+    ofxIntSlider textX3;
     ofxIntSlider textY;
+    ofxIntSlider textY2;
     
     // Note: These are all in square units... should be multiplied by GRID_SQUARE_SIZE
     int targetRectX;
